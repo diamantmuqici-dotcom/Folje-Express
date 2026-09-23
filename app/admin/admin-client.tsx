@@ -1,8 +1,9 @@
 "use client";
 import {useEffect,useState} from "react";
+import type {FormEvent} from "react";
 import type {Design} from "@/lib/store";
 
-const LOGO="https://raw.githubusercontent.com/diamantmuqici-dotcom/Folje-Express/main/logo.png";
+const LOGO="/logo.png";
 
 export default function AdminClient(){
   const [logged,setLogged]=useState(false),[password,setPassword]=useState(""),[items,setItems]=useState<Design[]>([]),[loading,setLoading]=useState(false),[message,setMessage]=useState("");
@@ -14,14 +15,14 @@ export default function AdminClient(){
   }
   useEffect(()=>{load(false)},[]);
 
-  async function login(e:React.FormEvent){
+  async function login(e:FormEvent){
     e.preventDefault();setLoading(true);
     const r=await fetch("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password})});
     setLoading(false);
     if(r.ok){setLogged(true);setMessage("U kyçe me sukses.");await load(true)}
     else setMessage("Fjalëkalimi nuk është i saktë.");
   }
-  async function upload(e:React.FormEvent){
+  async function upload(e:FormEvent){
     e.preventDefault();
     if(!form.image){setMessage("Zgjidh një foto.");return}
     setLoading(true);
