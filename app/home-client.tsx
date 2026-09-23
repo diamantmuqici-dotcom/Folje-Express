@@ -99,8 +99,8 @@ export default function HomeClient({initialDesigns}:{initialDesigns:Design[]}){
         <a href="#designs" onClick={()=>setMenu(false)}>Dizajnet</a>
         <a href="#process" onClick={()=>setMenu(false)}>Procesi</a>
         <a href="#contact" onClick={()=>setMenu(false)}>Kontakt</a>
+        <a href="/admin" onClick={()=>setMenu(false)}>Admin</a>
       </nav>
-      <a className="admin-link" href="/admin">Admin</a>
     </header>
 
     <section id="home" className="hero">
@@ -111,7 +111,6 @@ export default function HomeClient({initialDesigns}:{initialDesigns:Design[]}){
         <div className="actions">
           <a className="btn primary" href="#designs">Shiko dizajnet <span>↗</span></a>
           <a className="btn" href="#contact">Na kontakto</a>
-          <a className="btn admin-hero" href="/admin">⚙ Admin</a>
         </div>
         <div className="trust"><span>01</span> DESIGN <i/> <span>02</span> FOIL <i/> <span>03</span> FINISH</div>
       </div>
