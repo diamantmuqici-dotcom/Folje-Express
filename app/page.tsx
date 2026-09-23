@@ -1,4 +1,4 @@
-import { readDesigns } from "@/lib/store";
+import {readDesigns} from "@/lib/store";
 import HomeClient from "./home-client";
 
 export const dynamic="force-dynamic";
