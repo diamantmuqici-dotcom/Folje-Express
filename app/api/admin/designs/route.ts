@@ -3,8 +3,12 @@ import { readDesigns,writeDesigns,removeImage,Design } from "@/lib/store";
 import { put } from "@vercel/blob";
 
 export const runtime="nodejs";
-
 function clean(v:FormDataEntryValue|null,max=1000){return typeof v==="string"?v.trim().slice(0,max):"";}
+
+export async function GET(){
+  if(!(await isAdmin())) return Response.json({error:"Nuk je i autorizuar."},{status:401});
+  return Response.json(await readDesigns(),{headers:{"Cache-Control":"no-store"}});
+}
 
 export async function POST(request:Request){
   if(!(await isAdmin())) return Response.json({error:"Nuk je i autorizuar."},{status:401});
