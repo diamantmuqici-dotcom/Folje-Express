@@ -100,7 +100,7 @@ export default function HomeClient({initialDesigns}:{initialDesigns:Design[]}){
         <a href="#process" onClick={()=>setMenu(false)}>Procesi</a>
         <a href="#contact" onClick={()=>setMenu(false)}>Kontakt</a>
       </nav>
-      <a className="admin-link" href="/admin">ADMIN</a>
+      <a className="admin-link" href="/admin">Admin</a>
     </header>
 
     <section id="home" className="hero">
