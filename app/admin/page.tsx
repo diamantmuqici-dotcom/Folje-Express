@@ -1,2 +1,7 @@
 import AdminClient from "./admin-client";
-export default function AdminPage(){return <AdminClient/>}
+
+export const dynamic="force-dynamic";
+
+export default function AdminPage(){
+  return <AdminClient/>;
+}
