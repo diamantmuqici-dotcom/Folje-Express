@@ -35,5 +35,5 @@ export async function writeDesigns(data:Design[]){
 
 export async function removeImage(url:string){
   if(!url) return;
-  try{await del(url,{access:"public"});}catch{}
+  try{await del(url);}catch{}
 }
