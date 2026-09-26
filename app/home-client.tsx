@@ -8,7 +8,7 @@ import HeroScene from "@/components/HeroScene";
 import ColorLab from "@/components/ColorLab";
 
 const LOGO = "/logo.png";
-const FILTER_KEYS = ["designs.all", "Makina", "Motoçikleta", "Të dyja"] as const;
+const FILTER_KEYS = ["designs.all", "Motoçikleta", "Folje"] as const;
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                             */
@@ -24,7 +24,6 @@ function useReveal() {
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
-    const els = root.querySelectorAll(".reveal");
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -34,10 +33,18 @@ function useReveal() {
           }
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0.08 }
     );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    /* Re-scan whenever the tree changes (filters, search, language switch)
+       so freshly mounted cards never stay invisible. */
+    const scan = () => root.querySelectorAll(".reveal:not(.in)").forEach((el) => io.observe(el));
+    scan();
+    const mo = new MutationObserver(scan);
+    mo.observe(root, { childList: true, subtree: true });
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
   }, []);
   return ref;
 }
@@ -178,7 +185,7 @@ function ContactForm({ settings, lang }: { settings: SiteSettings; lang: Lang })
         <input name="vehicle" placeholder={t("form.vehicle")} maxLength={80} />
       </div>
       <select name="service" defaultValue={t("form.service1")}>
-        {[1, 2, 3, 4, 5, 6].map((i) => (
+        {[1, 2, 3, 4, 5].map((i) => (
           <option key={i}>{t(`form.service${i}`)}</option>
         ))}
       </select>
@@ -334,7 +341,7 @@ export default function HomeClient({
         <div className="marquee-track">
           {Array.from({ length: 2 }).map((_, k) => (
             <div className="marquee-row" key={k}>
-              {["FOLJE EXPRESS", "CAR WRAP", "NDËRRIM NGJYRE", "MATTE / GLOSS / SATIN / CHROME", "MOTOÇIKLETA", "PPF MBROJTJE", "DIZAJNE CUSTOM", "FOLJEEXPRESS"].map((x) => (
+              {["FOLJE EXPRESS", "MOTOR WRAP", "NDËRRIM NGJYRE", "MATTE / GLOSS / SATIN / CHROME", "MOTOÇIKLETA", "FOLJE PREMIUM", "DIZAJNE CUSTOM", "FOLJEEXPRESS"].map((x) => (
                 <span key={x}>{x} /</span>
               ))}
             </div>
@@ -387,6 +394,32 @@ export default function HomeClient({
               <a className="btn primary" href="#contact">{t("designs.emptyCta")}</a>
             </div>
           )}
+          {/* always-visible custom order card — every filter, every language */}
+          <article className="design-card custom-card reveal">
+            <div className="custom-card-body">
+              <span className="eyebrow">{t("custom.eyebrow")}</span>
+              <h3>{t("custom.title")}</h3>
+              <p>{t("custom.text")}</p>
+              <div className="design-actions">
+                <a
+                  className="btn small primary"
+                  href={waLink(
+                    settings,
+                    lang === "en"
+                      ? `Hello ${settings.businessName}! I want a custom foil design for my motorcycle.`
+                      : lang === "de"
+                        ? `Hallo ${settings.businessName}! Ich möchte ein eigenes Foliendesign für mein Motorrad.`
+                        : `Përshëndetje ${settings.businessName}! Dua një dizajn folje custom për motorin tim.`
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("custom.ctaWa")}
+                </a>
+                <a className="btn small" href="#contact">{t("custom.cta")}</a>
+              </div>
+            </div>
+          </article>
         </div>
         {featured > 0 && (
           <p className="designs-note reveal">
@@ -514,7 +547,7 @@ export default function HomeClient({
         </div>
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} {settings.businessName}. {t("footer.rights")}</span>
-          <span className="footer-seo" aria-hidden="true">folje · folje express · foljeexpress · car wrap</span>
+          <span className="footer-seo" aria-hidden="true">folje · folje express · foljeexpress · motor wrap</span>
           <a href="#home">{t("footer.top")}</a>
         </div>
       </footer>

@@ -1,7 +1,7 @@
 # FOLJE EXPRESS — Automotive Wrap Studio Platform
 
-Premium Next.js 16 website + full business backend for **Folje Express** — car & motorcycle
-wrapping studio. Dark 3D design (three.js), interactive Color Lab visualizer, trilingual public
+Premium Next.js 16 website + full business backend for **Folje Express** — motorcycle
+wrapping & foil studio (motorcycles and foils only: no cars, no PPF). Dark 3D design (three.js), interactive Color Lab visualizer, trilingual public
 site (Albanian / English / German), team accounts with four permission roles, order inbox,
 complete audit logging, DDoS / injection protection and deep SEO for
 "folje", "folje express", "foljeexpress".
@@ -95,7 +95,9 @@ and the source IP. Visible only to **Co Owner** and **Owner**.
 - **Production (Vercel):** set `BLOB_READ_WRITE_TOKEN` → JSON data private in Vercel Blob,
   product photos as public Blob URLs.
 - **Development:** automatic local fallback (`./data/*.json`, `./public/uploads`), git-ignored.
-- Bundled media lives in `./public/media` (logo + the forged-carbon wrap product photo).
+- Bundled media lives in `./public/media`:
+  - `forged-carbon-wrap.jpg` — the 50€ starter product photo
+  - `profile-logo.png` — square avatar for TikTok / Instagram / Facebook profiles (@foljeexpress)
 
 ## 8. Setup & deploy
 
@@ -117,3 +119,7 @@ After deploying, submit the domain in Google Search Console and request indexing
 The starter product **Forged Carbon Shield — 50€** (recreation of the real scooter wrap,
 forged-carbon marble pattern on the centre panels) ships in `public/media` and appears
 automatically until you publish your own designs.
+
+Business scope is **motorcycles + foils only** (categories: Motoçikleta / Folje). Every filter
+view also shows a permanent **custom order card** so visitors can always request a custom
+design via WhatsApp or the contact form. Socials default to TikTok & Instagram @foljeexpress.

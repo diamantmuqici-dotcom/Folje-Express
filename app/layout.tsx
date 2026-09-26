@@ -12,32 +12,29 @@ const KEYWORDS = [
   "folje express",
   "foljeexpress",
   "folje express kosovo",
-  "folje për makina",
-  "folje makinash",
-  "folje veturash",
-  "folje motoçikleta",
-  "ndërrim ngjyre makine",
-  "car wrap",
-  "car wrapping",
-  "vinyl wrap",
-  "vehicle wrap",
-  "folie makine",
+  "folje motorrash",
+  "folje motoçikletash",
+  "folje për motor",
+  "ndërrim ngjyre motori",
+  "motor wrap",
+  "motorcycle wrap",
+  "motorcycle wrapping",
+  "vinyl wrap moto",
+  "moto folie",
   "wrap studio",
-  "ngjyra makinash",
-  "dizajne makinash",
-  "paint protection film",
-  "ppf",
+  "dizajne motorrash",
   "chrome wrap",
   "satin wrap",
   "matte wrap",
+  "forged carbon wrap",
   "folje Prishtinë",
   "folje Kosovë",
 ];
 
 export async function generateMetadata(): Promise<Metadata> {
   const s = await readSettings();
-  const title = `${s.businessName} — Folje për Makina & Motoçikleta | Car Wrap Studio`;
-  const description = `${s.businessName} (FoljeExpress) — studio premium për folje makinash dhe motoçikletash: ndërrim ngjyre, dizajne custom, PPF mbrojtëse. ${s.tagline}. Shiko dizajnet, çmimet dhe porosit online.`;
+  const title = `${s.businessName} — Folje për Motoçikleta | Motorcycle Wrap Studio`;
+  const description = `${s.businessName} (FoljeExpress) — studio premium për folje motoçikletash: ndërrim ngjyre, dizajne custom dhe detaje me folje. ${s.tagline}. Shiko dizajnet, çmimet dhe porosit online.`;
   return {
     metadataBase: new URL(SITE_URL),
     title: { default: title, template: `%s · ${s.businessName}` },
@@ -52,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       siteName: s.businessName,
-      title: `${s.businessName} — Folje Express | Car Wrap Studio`,
+      title: `${s.businessName} — Folje Express | Motorcycle Wrap Studio`,
       description,
       url: SITE_URL,
       locale: "sq_AL",
@@ -88,7 +85,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     "@type": "AutoBusiness",
     name: s.businessName,
     alternateName: ["Folje Express", "FoljeExpress", "folje"],
-    description: `Studio për folje makinash dhe motoçikletash — ${s.tagline}.`,
+    description: `Studio për folje motoçikletash — ${s.tagline}.`,
     url: SITE_URL,
     image: `${SITE_URL}/logo.png`,
     logo: `${SITE_URL}/logo.png`,
@@ -102,7 +99,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       s.instagram ? `https://instagram.com/${s.instagram.replace(/^@/, "")}` : "",
       s.tiktok ? `https://tiktok.com/@${s.tiktok.replace(/^@/, "")}` : "",
     ].filter(Boolean),
-    knowsAbout: ["folje makinash", "car wrap", "vinyl wrap", "ndërrim ngjyre", "paint protection film"],
+    knowsAbout: ["folje motorrash", "motorcycle wrap", "vinyl wrap", "ndërrim ngjyre motori", "forged carbon folje"],
   };
 
   return (
