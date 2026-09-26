@@ -3,14 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import type { Design, SiteSettings } from "@/lib/store";
+import { LANGS, LANG_LABELS, translate, type Lang } from "@/lib/i18n";
 import HeroScene from "@/components/HeroScene";
 import ColorLab from "@/components/ColorLab";
 
 const LOGO = "/logo.png";
-const FILTERS = ["Të gjitha", "Makina", "Motoçikleta", "Të dyja"] as const;
+const FILTER_KEYS = ["designs.all", "Makina", "Motoçikleta", "Të dyja"] as const;
 
 /* ------------------------------------------------------------------ */
-/* Small helpers                                                       */
+/* Helpers                                                             */
 /* ------------------------------------------------------------------ */
 
 function waLink(settings: SiteSettings, text: string) {
@@ -41,14 +42,21 @@ function useReveal() {
   return ref;
 }
 
-/* ------------------------------------------------------------------ */
-/* Design card with 3D tilt + hover glare                              */
-/* ------------------------------------------------------------------ */
-
 const SWATCHES = ["swatch-a", "swatch-b", "swatch-c", "swatch-d", "swatch-e", "swatch-f"];
 
-function DesignCard({ d, index, settings }: { d: Design; index: number; settings: SiteSettings }) {
+function DesignCard({
+  d,
+  index,
+  settings,
+  lang,
+}: {
+  d: Design;
+  index: number;
+  settings: SiteSettings;
+  lang: Lang;
+}) {
   const ref = useRef<HTMLElement | null>(null);
+  const t = (k: string, v?: Record<string, string | number>) => translate(lang, k, v);
 
   const onMove = (e: React.PointerEvent) => {
     const el = ref.current;
@@ -62,13 +70,16 @@ function DesignCard({ d, index, settings }: { d: Design; index: number; settings
     el.style.setProperty("--gy", `${((py + 0.5) * 100).toFixed(1)}%`);
   };
   const onLeave = () => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.setProperty("--rx", "0deg");
-    el.style.setProperty("--ry", "0deg");
+    ref.current?.style.setProperty("--rx", "0deg");
+    ref.current?.style.setProperty("--ry", "0deg");
   };
 
-  const orderText = `Përshëndetje ${settings.businessName}! Dua të porosit dizajnin "${d.title}" (${d.category}). A mund të më tregoni çmimin dhe afatin?`;
+  const orderText =
+    lang === "en"
+      ? `Hello ${settings.businessName}! I would like to order the design "${d.title}" (${d.category}). Can I get the price and timeframe?`
+      : lang === "de"
+        ? `Hallo ${settings.businessName}! Ich möchte das Design "${d.title}" (${d.category}) bestellen. Preis und Dauer bitte?`
+        : `Përshëndetje ${settings.businessName}! Dua të porosit dizajnin "${d.title}" (${d.category}). A mund të më tregoni çmimin dhe afatin?`;
 
   return (
     <article
@@ -81,27 +92,27 @@ function DesignCard({ d, index, settings }: { d: Design; index: number; settings
       <div className="design-image">
         {d.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={d.image} alt={`${d.title} — folje ${d.category.toLowerCase()} nga ${settings.businessName}`} loading="lazy" />
+          <img src={d.image} alt={`${d.title} — ${d.category} · ${settings.businessName}`} loading="lazy" />
         ) : (
           <div className={"foil-swatch " + SWATCHES[index % SWATCHES.length]} />
         )}
         <div className="design-glare" />
         {d.badge && <span className="badge">{d.badge}</span>}
-        {d.featured && <span className="badge featured">★ ZGJEDHJA JONË</span>}
+        {d.featured && <span className="badge featured">{t("designs.featured")}</span>}
         <span className="category">{d.category}</span>
       </div>
       <div className="design-body">
-        <div className="design-number">FOLJE EXPRESS</div>
+        <div className="design-number">{settings.businessName}</div>
         <h3>{d.title}</h3>
         {d.description && <p>{d.description}</p>}
         <div className="design-foot">
           <strong>{d.price}</strong>
           <div className="design-actions">
             <a className="btn small primary" href={waLink(settings, orderText)} target="_blank" rel="noopener noreferrer">
-              Porosit
+              {t("designs.order")}
             </a>
             <a className="btn small" href="#contact">
-              Ofertë
+              {t("designs.quote")}
             </a>
           </div>
         </div>
@@ -114,9 +125,10 @@ function DesignCard({ d, index, settings }: { d: Design; index: number; settings
 /* Contact form                                                        */
 /* ------------------------------------------------------------------ */
 
-function ContactForm({ settings }: { settings: SiteSettings }) {
+function ContactForm({ settings, lang }: { settings: SiteSettings; lang: Lang }) {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
   const [error, setError] = useState("");
+  const t = (k: string, v?: Record<string, string | number>) => translate(lang, k, v);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -132,25 +144,24 @@ function ContactForm({ settings }: { settings: SiteSettings }) {
       const data = await r.json().catch(() => ({}));
       if (!r.ok) {
         setStatus("error");
-        setError(data.error || "Diçka shkoi keq. Provo përsëri.");
+        setError(data.error || t("form.error"));
         return;
       }
       setStatus("ok");
       e.currentTarget.reset();
     } catch {
       setStatus("error");
-      setError("Nuk u dërgua. Kontrollo lidhjen e internetit.");
+      setError(t("form.error"));
     }
   }
 
   if (status === "ok") {
     return (
       <div className="form-success">
-        <div className="form-success-icon">✓</div>
-        <h3>Mesazhi u dërgua!</h3>
-        <p>Faleminderit — {settings.businessName} do të kontaktohet me ty shumë shpejt.</p>
+        <h3>{t("form.okTitle")}</h3>
+        <p>{t("form.okText", { biz: settings.businessName })}</p>
         <button className="btn" onClick={() => setStatus("idle")}>
-          Dërgo një mesazh tjetër
+          {t("form.okAgain")}
         </button>
       </div>
     );
@@ -159,29 +170,26 @@ function ContactForm({ settings }: { settings: SiteSettings }) {
   return (
     <form className="contact-form" onSubmit={submit}>
       <div className="form-row">
-        <input name="name" required placeholder="Emri *" maxLength={80} autoComplete="name" />
-        <input name="phone" placeholder="Telefoni *" maxLength={40} autoComplete="tel" />
+        <input name="name" required placeholder={t("form.name")} maxLength={80} autoComplete="name" />
+        <input name="phone" placeholder={t("form.phone")} maxLength={40} autoComplete="tel" />
       </div>
       <div className="form-row">
-        <input name="email" type="email" placeholder="Email" maxLength={120} autoComplete="email" />
-        <input name="vehicle" placeholder="Makina / Motoçikleta (p.sh. BMW E46)" maxLength={80} />
+        <input name="email" type="email" placeholder={t("form.email")} maxLength={120} autoComplete="email" />
+        <input name="vehicle" placeholder={t("form.vehicle")} maxLength={80} />
       </div>
-      <select name="service" defaultValue="Ndërrim ngjyre (wrap)">
-        <option>Ndërrim ngjyre (wrap)</option>
-        <option>Dizajn custom</option>
-        <option>PPF — mbrojtje boje</option>
-        <option>Folie motoçiklete</option>
-        <option>Detaje / aksesorë</option>
-        <option>Tjetër</option>
+      <select name="service" defaultValue={t("form.service1")}>
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <option key={i}>{t(`form.service${i}`)}</option>
+        ))}
       </select>
-      <textarea name="message" placeholder="Shkruaj mesazhin tënd…" maxLength={1000} rows={4} />
+      <textarea name="message" placeholder={t("form.message")} maxLength={1000} rows={4} />
       {/* honeypot — humans never see or fill this */}
-      <input name="company" tabIndex={-1} autoComplete="off" className="hp" aria-hidden="true" placeholder="Mos e plotëso" />
+      <input name="company" tabIndex={-1} autoComplete="off" className="hp" aria-hidden="true" />
       {status === "error" && <small className="form-error">{error}</small>}
       <button className="btn primary big" type="submit" disabled={status === "sending"}>
-        {status === "sending" ? "Duke dërguar…" : "Dërgo kërkesën ↗"}
+        {status === "sending" ? t("form.sending") : t("form.send")}
       </button>
-      <small className="form-note">Përgjigjemi zakonisht brenda pak orësh. Asnjë spam.</small>
+      <small className="form-note">{t("form.note")}</small>
     </form>
   );
 }
@@ -197,42 +205,57 @@ export default function HomeClient({
   initialDesigns: Design[];
   settings: SiteSettings;
 }) {
+  const [lang, setLang] = useState<Lang>("sq");
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [filter, setFilter] = useState<string>("Të gjitha");
+  const [filter, setFilter] = useState<string>("all");
   const [query, setQuery] = useState("");
   const revealRef = useReveal();
 
   useEffect(() => {
+    const stored = (typeof localStorage !== "undefined" && localStorage.getItem("folje_lang")) as Lang | null;
+    if (stored && LANGS.includes(stored)) setLang(stored);
+  }, []);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    localStorage.setItem("folje_lang", lang);
+  }, [lang]);
+  useEffect(() => {
     document.documentElement.style.setProperty("--accent", settings.accent || "#5bc7ff");
   }, [settings.accent]);
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  /* anonymous visit beacon — powers the admin stats tab */
   useEffect(() => {
     fetch("/api/track", { method: "POST" }).catch(() => {});
   }, []);
 
+  const t = (k: string, v?: Record<string, string | number>) => translate(lang, k, v);
+  /* admin copy with per-language overrides (En / De), falling back to SQ */
+  const pick = (base: "heroTitle" | "heroHighlight" | "heroSubtitle" | "about") => {
+    const suffix = lang === "en" ? "En" : lang === "de" ? "De" : "";
+    const value = suffix ? (settings as Record<string, string>)[base + suffix] : "";
+    return value && value.trim() ? value : settings[base];
+  };
+
   const designs = useMemo(() => {
     const q = query.trim().toLowerCase();
     return initialDesigns.filter((d) => {
-      const inFilter = filter === "Të gjitha" || d.category === filter;
+      const inFilter = filter === "all" || d.category === filter;
       const inQuery = !q || `${d.title} ${d.description} ${d.category} ${d.badge}`.toLowerCase().includes(q);
       return inFilter && inQuery;
     });
   }, [initialDesigns, filter, query]);
 
   const featured = initialDesigns.filter((d) => d.featured).length;
+  const filterValue = filter === "all" ? t("designs.all") : filter;
 
   return (
     <main ref={revealRef}>
-      {/* ---------------------------------------------------------- NAV */}
+      {/* NAV */}
       <header className={"nav " + (scrolled ? "scrolled" : "")}>
         <a className="brand" href="#home" aria-label={settings.businessName}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -242,22 +265,35 @@ export default function HomeClient({
             <small>{settings.tagline}</small>
           </span>
         </a>
-        <button className={"menu " + (menu ? "open" : "")} onClick={() => setMenu(!menu)} aria-label="Hap menunë">
+        <button className={"menu " + (menu ? "open" : "")} onClick={() => setMenu(!menu)} aria-label="Menu">
           <i /><i /><i />
         </button>
         <nav className={menu ? "open" : ""}>
-          <a href="#home" onClick={() => setMenu(false)}>Ballina</a>
-          <a href="#designs" onClick={() => setMenu(false)}>Dizajnet</a>
-          <a href="#color-lab" onClick={() => setMenu(false)}>Color Lab 3D</a>
-          <a href="#process" onClick={() => setMenu(false)}>Procesi</a>
-          <a href="#contact" onClick={() => setMenu(false)}>Kontakt</a>
-          <a className="btn small primary" href={waLink(settings, `Përshëndetje ${settings.businessName}! Dua informacion për folje.`)} target="_blank" rel="noopener noreferrer" onClick={() => setMenu(false)}>
-            WhatsApp ↗
+          <a href="#home" onClick={() => setMenu(false)}>{t("nav.home")}</a>
+          <a href="#designs" onClick={() => setMenu(false)}>{t("nav.designs")}</a>
+          <a href="#color-lab" onClick={() => setMenu(false)}>{t("nav.lab")}</a>
+          <a href="#process" onClick={() => setMenu(false)}>{t("nav.process")}</a>
+          <a href="#contact" onClick={() => setMenu(false)}>{t("nav.contact")}</a>
+          <div className="lang-switch" role="group" aria-label="Language">
+            {LANGS.map((l) => (
+              <button key={l} className={lang === l ? "active" : ""} onClick={() => setLang(l)}>
+                {LANG_LABELS[l]}
+              </button>
+            ))}
+          </div>
+          <a
+            className="btn small primary"
+            href={waLink(settings, lang === "en" ? `Hello ${settings.businessName}! I need info about your wraps.` : lang === "de" ? `Hallo ${settings.businessName}! Ich brauche Infos zu euren Folien.` : `Përshëndetje ${settings.businessName}! Dua informacion për foljet.`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMenu(false)}
+          >
+            {t("nav.whatsapp")}
           </a>
         </nav>
       </header>
 
-      {/* --------------------------------------------------------- HERO */}
+      {/* HERO */}
       <section id="home" className="hero">
         <div className="hero-bg" aria-hidden="true">
           <div className="hero-glow a" />
@@ -267,152 +303,153 @@ export default function HomeClient({
         <div className="hero-copy reveal in">
           <span className="eyebrow pulse-dot">{settings.heroEyebrow}</span>
           <h1>
-            {settings.heroTitle}
+            {pick("heroTitle")}
             <br />
-            <em>{settings.heroHighlight}</em>
+            <em>{pick("heroHighlight")}</em>
           </h1>
-          <p>{settings.heroSubtitle}</p>
+          <p>{pick("heroSubtitle")}</p>
           <div className="actions">
             <a className="btn primary big" href="#designs">
-              Shiko dizajnet <span>↗</span>
+              {t("hero.ctaDesigns")}
             </a>
             <a className="btn big" href="#color-lab">
-              Provo Color Lab 3D
+              {t("hero.ctaLab")}
             </a>
           </div>
           <div className="trust">
-            <span><b>01</b> DESIGN</span><i />
-            <span><b>02</b> FOIL</span><i />
-            <span><b>03</b> FINISH</span>
+            <span><b>01</b> {t("hero.trust1")}</span><i />
+            <span><b>02</b> {t("hero.trust2")}</span><i />
+            <span><b>03</b> {t("hero.trust3")}</span>
           </div>
         </div>
         <div className="hero-stage reveal in">
           <HeroScene accent={settings.accent} />
           <div className="stage-label"><b>3D</b> {settings.businessName}</div>
-          <div className="stage-orbit">INTERAKTIVE / LËVIZ MAUSIN</div>
+          <div className="stage-orbit">{t("hero.stage")}</div>
         </div>
       </section>
 
-      {/* ------------------------------------------------------ MARQUEE */}
+      {/* MARQUEE */}
       <div className="marquee" aria-hidden="true">
         <div className="marquee-track">
           {Array.from({ length: 2 }).map((_, k) => (
             <div className="marquee-row" key={k}>
-              {["FOLJE EXPRESS", "CAR WRAP", "NDËRRIM NGJYRE", "MATTE · GLOSS · SATIN · CHROME", "MOTOÇIKLETA", "PPF MBROJTJE", "DIZAJNE CUSTOM", "FOLJEEXPRESS"].map((t) => (
-                <span key={t}>{t} ✦</span>
+              {["FOLJE EXPRESS", "CAR WRAP", "NDËRRIM NGJYRE", "MATTE / GLOSS / SATIN / CHROME", "MOTOÇIKLETA", "PPF MBROJTJE", "DIZAJNE CUSTOM", "FOLJEEXPRESS"].map((x) => (
+                <span key={x}>{x} /</span>
               ))}
             </div>
           ))}
         </div>
       </div>
 
-      {/* ----------------------------------------------------- DESIGNS */}
+      {/* DESIGNS */}
       <section id="designs" className="section designs">
         <div className="section-head reveal">
           <div>
-            <span className="eyebrow">DESIGN LIBRARY</span>
-            <h2>Dizajnet <em>tona.</em></h2>
+            <span className="eyebrow">{t("designs.eyebrow")}</span>
+            <h2>{t("designs.title")} <em>{t("designs.titleEm")}</em></h2>
           </div>
-          <p>
-            Folje të publikuara nga {settings.businessName} — foto, çmime dhe përshkrime të
-            përditësuara. Kërko ose filtro sipas kategorisë.
-          </p>
+          <p>{t("designs.subtitle", { biz: settings.businessName })}</p>
         </div>
         <div className="designs-toolbar reveal">
           <div className="filters">
-            {FILTERS.map((x) => (
-              <button className={filter === x ? "active" : ""} key={x} onClick={() => setFilter(x)}>
-                {x}
-              </button>
-            ))}
+            {FILTER_KEYS.map((k) => {
+              const value = k === "designs.all" ? "all" : k;
+              const label = k === "designs.all" ? t("designs.all") : k;
+              return (
+                <button className={filter === value ? "active" : ""} key={k} onClick={() => setFilter(value)}>
+                  {label}
+                </button>
+              );
+            })}
           </div>
           <div className="search">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" /><path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Kërko dizajn, ngjyrë, folje…"
-              aria-label="Kërko dizajne"
+              placeholder={t("designs.search")}
+              aria-label={t("designs.search")}
             />
-            {query && <button className="clear" onClick={() => setQuery("")} aria-label="Pastro kërkimin">✕</button>}
+            {query && (
+              <button className="clear" onClick={() => setQuery("")}>
+                {t("designs.clear")}
+              </button>
+            )}
           </div>
         </div>
         <div className="design-grid">
           {designs.length ? (
-            designs.map((d, i) => <DesignCard key={d.id} d={d} index={i} settings={settings} />)
+            designs.map((d, i) => <DesignCard key={d.id} d={d} index={i} settings={settings} lang={lang} />)
           ) : (
             <div className="empty reveal in">
-              <b>Asnjë rezultat.</b>
-              <p>Nuk ka dizajne për “{query || filter}”. Provo një kërkim tjetër ose na kontakto për porosi custom.</p>
-              <a className="btn primary" href="#contact">Kërko dizajn custom</a>
+              <b>{t("designs.emptyTitle")}</b>
+              <p>{t("designs.emptyText")}</p>
+              <a className="btn primary" href="#contact">{t("designs.emptyCta")}</a>
             </div>
           )}
         </div>
         {featured > 0 && (
-          <p className="designs-note reveal">★ {featured} dizajn{featured > 1 ? "e" : ""} i/e zgjedhur nga ekipi ynë</p>
+          <p className="designs-note reveal">
+            {featured} {t("designs.featuredNote", { s: featured > 1 ? "e" : "" , e: featured > 1 ? "e" : "" })}
+          </p>
         )}
       </section>
 
-      {/* ---------------------------------------------------- COLOR LAB */}
+      {/* COLOR LAB */}
       <section id="color-lab" className="section lab">
         <div className="section-head reveal">
           <div>
-            <span className="eyebrow">3D WRAP VISUALIZER</span>
-            <h2>Color <em>Lab.</em></h2>
+            <span className="eyebrow">{t("lab.eyebrow")}</span>
+            <h2>{t("lab.title")} <em>{t("lab.titleEm")}</em></h2>
           </div>
-          <p>
-            Zgjidh finiturën e foljes dhe shikoje drejtpërdrejt në 3D — gloss, matte, satin,
-            krom ose flip. Ekskluzivisht te {settings.businessName}.
-          </p>
+          <p>{t("lab.subtitle", { biz: settings.businessName })}</p>
         </div>
         <div className="reveal">
-          <ColorLab />
+          <ColorLab lang={lang} />
         </div>
       </section>
 
-      {/* ------------------------------------------------------ PROCESS */}
+      {/* PROCESS */}
       <section id="process" className="section process">
         <div className="section-head reveal">
           <div>
-            <span className="eyebrow">SI FUNKSIONON</span>
-            <h2>Ngjyra. Dizajn. <em>Aplikim.</em></h2>
+            <span className="eyebrow">{t("process.eyebrow")}</span>
+            <h2>{t("process.title")} <em>{t("process.titleEm")}</em></h2>
           </div>
         </div>
         <div className="steps">
-          {[
-            { n: "01", t: "Zgjedh stilin", p: "Shfleto dizajnet ose provo Color Lab 3D dhe zgjidh ngjyrën që të përfaqëson." },
-            { n: "02", t: "Përgatitja", p: "Folia pritet dhe përgatitet me precizion për automjetin tënd — pa surpriza." },
-            { n: "03", t: "Aplikimi", p: "Aplikim i pastër, me fokus te detajet, dhe përfundim që të kthen kokat." },
-            { n: "04", t: "Mbrojtja", p: "Opsionalisht shtojmë shtresë mbrojtëse (PPF) që ngjyra të zgjasë me vite." },
-          ].map((s, i) => (
-            <div className="step reveal" key={s.n} style={{ transitionDelay: `${i * 80}ms` }}>
-              <b>{s.n}</b>
-              <h3>{s.t}</h3>
-              <p>{s.p}</p>
+          {[1, 2, 3, 4].map((i, idx) => (
+            <div className="step reveal" key={i} style={{ transitionDelay: `${idx * 80}ms` }}>
+              <b>0{i}</b>
+              <h3>{t(`process.s${i}t`)}</h3>
+              <p>{t(`process.s${i}p`)}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* -------------------------------------------------------- ABOUT */}
+      {/* ABOUT */}
       <section id="about" className="section about">
         <div className="about-card reveal">
           <div className="about-copy">
-            <span className="eyebrow">PSE {settings.businessName.toUpperCase()}</span>
-            <h2>Cilësi premium,<br /><em>çdo ditë.</em></h2>
-            <p>{settings.about}</p>
+            <span className="eyebrow">{t("about.eyebrow")} — {settings.businessName}</span>
+            <h2>
+              {t("about.title")}
+              <br />
+              <em>{t("about.titleEm")}</em>
+            </h2>
+            <p>{pick("about")}</p>
             <ul className="about-list">
-              <li><b>✓</b> Materiale premium me garanci</li>
-              <li><b>✓</b> Aplikim profesional pa flluska</li>
-              <li><b>✓</b> Dizajne custom sipas dëshirës</li>
-              <li><b>✓</b> Çmime transparente — pa pagesa të fshehura</li>
+              {[1, 2, 3, 4].map((i) => (
+                <li key={i}>{t(`about.l${i}`)}</li>
+              ))}
             </ul>
           </div>
           <div className="about-stats">
             {[
-              { k: "100%", v: "Përkushtim në detaje" },
-              { k: "24h", v: "Përgjigje mesazheve" },
-              { k: "∞", v: "Kombinime ngjyrash" },
+              { k: "100%", v: t("about.st1") },
+              { k: "24h", v: t("about.st2") },
+              { k: "1000+", v: t("about.st3") },
             ].map((x) => (
               <div key={x.v}>
                 <strong>{x.k}</strong>
@@ -423,30 +460,40 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* ------------------------------------------------------ CONTACT */}
+      {/* CONTACT */}
       <section id="contact" className="section contact-section">
         <div className="contact-head reveal">
-          <span className="eyebrow">{settings.businessName} / KONTAKT</span>
-          <h2>Gati për një<br /><em>pamje tjetër?</em></h2>
-          <p>Dërgo kërkesën dhe merr ofertë shpejt. Ose na shkruaj direkt në WhatsApp.</p>
+          <span className="eyebrow">{settings.businessName} / {t("contact.eyebrow")}</span>
+          <h2>
+            {t("contact.title")}
+            <br />
+            <em>{t("contact.titleEm")}</em>
+          </h2>
+          <p>{t("contact.subtitle")}</p>
           <div className="contact-info">
-            <a href={`tel:${settings.phone.replace(/\s/g, "")}`}>📞 {settings.phone}</a>
-            {settings.email && <a href={`mailto:${settings.email}`}>✉️ {settings.email}</a>}
-            <span>📍 {settings.address}</span>
-            <span>🕘 {settings.hours}</span>
+            <a href={`tel:${settings.phone.replace(/\s/g, "")}`}><b>Tel</b> {settings.phone}</a>
+            {settings.email && <a href={`mailto:${settings.email}`}><b>Email</b> {settings.email}</a>}
+            <span><b>Adr</b> {settings.address}</span>
+            <span><b>Orari</b> {settings.hours}</span>
           </div>
           <div className="contact-socials">
-            {settings.instagram && <a href={`https://instagram.com/${settings.instagram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">Instagram</a>}
-            {settings.tiktok && <a href={`https://tiktok.com/@${settings.tiktok.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">TikTok</a>}
-            {settings.whatsapp && <a href={waLink(settings, "Përshëndetje! Dua informacion për folje.")} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
+            {settings.instagram && (
+              <a href={`https://instagram.com/${settings.instagram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">Instagram</a>
+            )}
+            {settings.tiktok && (
+              <a href={`https://tiktok.com/@${settings.tiktok.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">TikTok</a>
+            )}
+            {settings.whatsapp && (
+              <a href={waLink(settings, "Përshëndetje!")} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            )}
           </div>
         </div>
         <div className="reveal">
-          <ContactForm settings={settings} />
+          <ContactForm settings={settings} lang={lang} />
         </div>
       </section>
 
-      {/* ------------------------------------------------------- FOOTER */}
+      {/* FOOTER */}
       <footer>
         <div className="footer-top">
           <div className="footer-brand">
@@ -454,21 +501,21 @@ export default function HomeClient({
             <img src={LOGO} alt={settings.businessName} />
             <div>
               <b>{settings.businessName}</b>
-              <span>{settings.tagline} — folje, wrap & dizajne custom.</span>
+              <span>{settings.tagline} — {t("footer.tagline")}</span>
             </div>
           </div>
           <nav className="footer-nav">
-            <a href="#designs">Dizajnet</a>
-            <a href="#color-lab">Color Lab 3D</a>
-            <a href="#process">Procesi</a>
-            <a href="#contact">Kontakt</a>
+            <a href="#designs">{t("nav.designs")}</a>
+            <a href="#color-lab">{t("nav.lab")}</a>
+            <a href="#process">{t("nav.process")}</a>
+            <a href="#contact">{t("nav.contact")}</a>
             <a href="/admin">Admin</a>
           </nav>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} {settings.businessName}. Të gjitha të drejtat e rezervuara.</span>
+          <span>© {new Date().getFullYear()} {settings.businessName}. {t("footer.rights")}</span>
           <span className="footer-seo" aria-hidden="true">folje · folje express · foljeexpress · car wrap</span>
-          <a href="#home">Lart ↑</a>
+          <a href="#home">{t("footer.top")}</a>
         </div>
       </footer>
     </main>
