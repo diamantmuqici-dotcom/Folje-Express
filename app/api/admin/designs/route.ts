@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     title,
     price: clean(form.get("price"), 60) || "Na kontakto",
     description: clean(form.get("description"), 500),
-    category: (CATEGORIES as string[]).includes(rawCategory) ? (rawCategory as Design["category"]) : "Të dyja",
+    category: (CATEGORIES as string[]).includes(rawCategory) ? (rawCategory as Design["category"]) : "Motoçikleta",
     image,
     badge: clean(form.get("badge"), 24),
     featured: form.get("featured") === "true",

@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "FOLJE EXPRESS — Folje për Makina & Motoçikleta",
+    name: "FOLJE EXPRESS — Folje për Motoçikleta",
     short_name: "FoljeExpress",
     description:
-      "Folje premium, ndërrim ngjyre dhe dizajne custom për makina e motoçikleta. Folje Express — automotive wrap studio.",
+      "Folje premium, ndërrim ngjyre dhe dizajne custom për motoçikleta. Folje Express — motorcycle wrap studio.",
     start_url: "/",
     display: "standalone",
     background_color: "#05070d",

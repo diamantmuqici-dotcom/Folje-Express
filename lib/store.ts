@@ -6,8 +6,8 @@ import type { Role } from "./permissions";
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
 
-export type Category = "Makina" | "Motoçikleta" | "Të dyja";
-export const CATEGORIES: Category[] = ["Makina", "Motoçikleta", "Të dyja"];
+export type Category = "Motoçikleta" | "Folje";
+export const CATEGORIES: Category[] = ["Motoçikleta", "Folje"];
 
 export type Design = {
   id: string;
@@ -213,7 +213,7 @@ function normalizeDesign(raw: Partial<Design>, index: number): Design {
     title: String(raw.title || "Pa titull"),
     price: String(raw.price || "Na kontakto"),
     description: String(raw.description || ""),
-    category: CATEGORIES.includes(raw.category as Category) ? (raw.category as Category) : "Të dyja",
+    category: CATEGORIES.includes(raw.category as Category) ? (raw.category as Category) : "Motoçikleta",
     image: String(raw.image || ""),
     badge: String(raw.badge || ""),
     featured: raw.featured === true,
@@ -244,7 +244,7 @@ const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 
 export const defaultSettings: SiteSettings = {
   businessName: "FOLJE EXPRESS",
-  tagline: "Automotive Wrap Studio",
+  tagline: "Motorcycle Wrap Studio",
   phone: "+383 49 000 000",
   whatsapp: "+38349000000",
   instagram: "foljeexpress",
@@ -252,25 +252,25 @@ export const defaultSettings: SiteSettings = {
   email: "info@foljeexpress.com",
   address: "Prishtinë, Kosovë",
   hours: "E Hënë – E Shtunë · 09:00 – 19:00",
-  heroEyebrow: "FOLJE EXPRESS / AUTOMOTIVE WRAP STUDIO",
+  heroEyebrow: "FOLJE EXPRESS / MOTORCYCLE WRAP STUDIO",
   heroTitle: "Ndrysho",
   heroHighlight: "pamjen.",
   heroSubtitle:
-    "Folie premium me ngjyra dhe dizajne për makina dhe motoçikleta. Një pamje e re, e ndërtuar rreth stilit tënd — nga Folje Express, për një rezultat që dallohet.",
+    "Folie premium me ngjyra dhe dizajne për motoçikleta. Një pamje e re, e ndërtuar rreth stilit tënd — nga Folje Express, për një rezultat që dallohet.",
   heroTitleEn: "Change",
   heroHighlightEn: "the look.",
   heroSubtitleEn:
-    "Premium coloured foils and designs for cars and motorcycles. A new look built around your style — by Folje Express, for a result that stands out.",
+    "Premium coloured foils and designs for motorcycles. A new look built around your style — by Folje Express, for a result that stands out.",
   heroTitleDe: "Verändere",
   heroHighlightDe: "den Look.",
   heroSubtitleDe:
-    "Premium-Folien in Farben und Designs für Autos und Motorräder. Ein neuer Look, gebaut um deinen Stil — von Folje Express, für ein Ergebnis das auffällt.",
+    "Premium-Folien in Farben und Designs für Motorräder. Ein neuer Look, gebaut um deinen Stil — von Folje Express, für ein Ergebnis das auffällt.",
   about:
-    "Folje Express është studio e specializuar për folie automobilistike: ndërrim ngjyre, mbrojtje PPF, dizajne custom dhe detaje për makina e motoçikleta. Çdo punim bëhet me materiale premium dhe përfundim të pastër.",
+    "Folje Express është studio e specializuar për folie motoçikletash: ndërrim ngjyre, dizajne custom dhe detaje me folje premium për motorin tënd. Çdo punim bëhet me materiale premium dhe përfundim të pastër.",
   aboutEn:
-    "Folje Express is a studio specialised in automotive wrapping: colour changes, PPF protection, custom designs and details for cars and motorcycles. Every job is done with premium materials and a clean finish.",
+    "Folje Express is a studio specialised in motorcycle wrapping: colour changes, custom designs and premium foil details for your bike. Every job is done with premium materials and a clean finish.",
   aboutDe:
-    "Folje Express ist ein Studio für Fahrzeugfolierung: Farbwechsel, PPF-Schutz, eigene Designs und Details für Autos und Motorräder. Jeder Auftrag wird mit Premium-Materialien und sauberem Finish ausgeführt.",
+    "Folje Express ist ein Studio für Motorrad-Folierung: Farbwechsel, eigene Designs und Premium-Foliendetails für dein Bike. Jeder Auftrag wird mit Premium-Materialien und sauberem Finish ausgeführt.",
   accent: "#5bc7ff",
 };
 

@@ -7,7 +7,7 @@ import type { Role } from "@/lib/permissions";
 import { ROLE_LABELS } from "@/lib/permissions";
 
 const LOGO = "/logo.png";
-const CATEGORIES = ["Makina", "Motoçikleta", "Të dyja"] as const;
+const CATEGORIES = ["Motoçikleta", "Folje"] as const;
 type Tab = "overview" | "orders" | "designs" | "settings" | "accounts" | "logs";
 
 type AccountRow = { id: string; username: string; role: Role; createdAt: string; createdBy: string };
