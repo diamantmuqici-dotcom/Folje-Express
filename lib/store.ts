@@ -96,12 +96,24 @@ export type Stats = {
 /* Storage backend: Vercel Blob when configured, local files in dev.   */
 /* ------------------------------------------------------------------ */
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const DATA_DIR_BASE = path.join(process.cwd(), "data");
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 
 function hasBlob() {
   return !!process.env.BLOB_READ_WRITE_TOKEN;
 }
+
+/**
+ * On Vercel the filesystem is read-only/ephemeral. Without a Blob token we
+ * fall back to /tmp so the panel still works between restarts of an instance;
+ * add a Vercel Blob store for permanent storage (README, section 7).
+ */
+function dataDir() {
+  if (!hasBlob() && process.env.VERCEL) return "/tmp/folje-data";
+  return DATA_DIR_BASE;
+}
+
+const DATA_DIR = dataDir();
 
 async function readText(blobPath: string, filePath: string): Promise<string | null> {
   if (hasBlob()) {
@@ -150,6 +162,9 @@ async function writeJSON(blobPath: string, filePath: string, data: unknown) {
 /* ------------------------------------------------------------------ */
 
 export async function saveImage(file: File): Promise<string> {
+  if (!hasBlob() && process.env.VERCEL) {
+    throw new Error("Upload-et e fotove kërkojnë Vercel Blob: shto BLOB_READ_WRITE_TOKEN te Vercel → Settings → Storage.");
+  }
   const ext = (file.name.split(".").pop() || "jpg").replace(/[^a-z0-9]/gi, "").toLowerCase() || "jpg";
   const name = `${crypto.randomUUID()}.${ext}`;
   if (hasBlob()) {
