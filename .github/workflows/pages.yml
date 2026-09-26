@@ -22,10 +22,16 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Stage static fallback site
+        run: |
+          mkdir -p site
+          cp index.html site/
+          cp -r public/. site/
+          cp logo.png site/ 2>/dev/null || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: site
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4

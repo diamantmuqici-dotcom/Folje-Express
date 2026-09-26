@@ -3,82 +3,232 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FOLJE EXPRESS — 3D Automotive Foil Design</title>
-<meta name="description" content="FOLJE EXPRESS — folie me ngjyra dhe dizajne për makina dhe motoçikleta.">
-<meta name="theme-color" content="#050505">
-<link rel="stylesheet" href="./styles.css">
+<title>FOLJE EXPRESS — Folje për Makina & Motoçikleta | Car Wrap Studio</title>
+<meta name="description" content="Folje Express (FoljeExpress) — studio premium për folje makinash dhe motoçikletash: ndërrim ngjyre, dizajne custom, matte, gloss, satin, chrome dhe PPF mbrojtëse. Shiko dizajnet dhe porosit online.">
+<meta name="keywords" content="folje, folje express, foljeexpress, folje makinash, folje për vetura, ndërrim ngjyre makine, car wrap, vinyl wrap, vehicle wrap, folie makine, wrap studio, matte wrap, gloss wrap, satin wrap, chrome wrap, paint protection film, ppf, folje Prishtinë, folje Kosovë">
+<meta name="theme-color" content="#05070d">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://folje-express.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FOLJE EXPRESS">
+<meta property="og:title" content="FOLJE EXPRESS — Folje për Makina & Motoçikleta">
+<meta property="og:description" content="Folie premium me ngjyra dhe dizajne për makina dhe motoçikleta. Ndrysho pamjen me Folje Express.">
+<meta property="og:image" content="./logo.png">
+<meta property="og:locale" content="sq_AL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FOLJE EXPRESS — Car Wrap Studio">
+<meta name="twitter:description" content="Folie premium, ndërrim ngjyre dhe dizajne custom për makina e motoçikleta.">
+<meta name="twitter:image" content="./logo.png">
+<link rel="icon" href="./logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"AutoBusiness","name":"FOLJE EXPRESS","alternateName":["Folje Express","FoljeExpress","folje"],"description":"Studio për folje makinash dhe motoçikletash — ndërrim ngjyre, dizajne custom, PPF.","url":"https://folje-express.vercel.app","image":"https://folje-express.vercel.app/logo.png","logo":"https://folje-express.vercel.app/logo.png","address":{"@type":"PostalAddress","addressLocality":"Prishtinë","addressCountry":"XK"},"areaServed":{"@type":"Country","name":"Kosovë"},"priceRange":"€€","openingHours":"Mo-Sa 09:00-19:00","knowsAbout":["folje makinash","car wrap","vinyl wrap","ndërrim ngjyre","paint protection film"]}
+</script>
+<style>
+:root{--bg:#05070d;--bg2:#090c14;--line:#1c2330;--text:#f4f6fa;--muted:#8b93a3;--faint:#5b6373;--accent:#5bc7ff;--red:#ff315b;--head:"Space Grotesk",Inter,system-ui,sans-serif;--body:Inter,system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 700px at 80% -10%,#101828 0,transparent 55%),radial-gradient(900px 600px at -10% 30%,#0b1522 0,transparent 50%),var(--bg);color:var(--text);font-family:var(--body);line-height:1.55;overflow-x:hidden}
+a{color:inherit;text-decoration:none}h1,h2,h3{font-family:var(--head)}img{max-width:100%}::selection{background:var(--accent);color:#04121c}
+.nav{position:fixed;z-index:60;top:14px;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),1200px);padding:10px 14px;display:flex;align-items:center;gap:22px;border:1px solid #fff1;border-radius:18px;background:#080b12cc;backdrop-filter:blur(22px);box-shadow:0 18px 70px #0008}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+.brand img{width:44px;height:44px;object-fit:contain;border-radius:10px}
+.brand b{font-family:var(--head);letter-spacing:.08em;font-size:14px}
+.nav nav{display:flex;gap:24px;font-size:13px;color:#b7bfcd;font-weight:500}
+.nav nav a:hover{color:#fff}
+.btn{border:1px solid #fff2;background:#12161f;color:#fff;border-radius:12px;padding:13px 20px;display:inline-flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:600;transition:.2s;white-space:nowrap}
+.btn:hover{transform:translateY(-2px);border-color:#fff4}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#7a5cff);color:#04121c;border-color:transparent;box-shadow:0 8px 30px -8px var(--accent)}
+.btn.big{padding:16px 24px;font-size:15px}
+.hero{max-width:1280px;min-height:100vh;margin:auto;padding:150px 30px 80px;display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.3em;color:var(--faint);font-weight:800;text-transform:uppercase}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.hero h1{font-size:clamp(60px,8.6vw,132px);line-height:.84;letter-spacing:-.07em;margin:20px 0 26px;font-weight:700}
+.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--accent) 10%,#a78bfa 60%,var(--red) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:560px;color:var(--muted);font-size:17px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.hero-stage{position:relative;height:min(680px,72vh);min-height:440px;border:1px solid #fff1;border-radius:30px;overflow:hidden;background:radial-gradient(circle at 50% 42%,#161d2b 0,#0a0e17 50%,#05070d 80%);box-shadow:0 50px 140px #000c,inset 0 0 90px #0006}
+#foil3d{position:absolute;inset:0}
+#foil3d canvas{display:block;width:100%!important;height:100%!important}
+.stage-label{position:absolute;left:24px;bottom:22px;font-size:9px;letter-spacing:.26em;color:var(--faint);font-weight:700;z-index:3}
+.stage-label b{color:var(--accent);font-size:12px;margin-right:6px}
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#070a11;overflow:hidden;padding:16px 0}
+.marquee-track{display:flex;width:max-content;animation:marquee 36s linear infinite}
+.marquee-row{display:flex;gap:42px;padding-right:42px}
+.marquee-row span{font-family:var(--head);font-size:13px;letter-spacing:.3em;font-weight:700;color:#404a5e;white-space:nowrap;text-transform:uppercase}
+@keyframes marquee{to{transform:translateX(-50%)}}
+.section{max-width:1280px;margin:auto;padding:110px 30px}
+.section-head{display:flex;justify-content:space-between;gap:50px;align-items:end;margin-bottom:44px}
+.section h2{font-size:clamp(44px,6vw,84px);line-height:.9;letter-spacing:-.06em;margin:14px 0 0;font-weight:700}
+.section h2 em{font-style:normal;color:var(--faint)}
+.section-head p{max-width:460px;color:var(--muted);margin:0;font-size:15px}
+.design-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.design-card{background:linear-gradient(160deg,#121826,#0a0e16);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s}
+.design-card:hover{transform:translateY(-5px);border-color:#fff3;box-shadow:0 30px 70px -30px #000e,0 0 40px -20px var(--accent)}
+.foil-preview{height:280px;position:relative;overflow:hidden;background-size:220% 220%;animation:foil 9s ease-in-out infinite}
+.foil-preview::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,#fff2 49%,transparent 58%);transform:translateX(-100%);animation:shine 5s infinite}
+.foil-red{background-image:linear-gradient(125deg,#070707,#33050a,#d91d35,#171717,#050505)}
+.foil-blue{background-image:linear-gradient(125deg,#05070b,#06214a,#2179d8,#080d16,#050505)}
+.foil-purple{background-image:linear-gradient(125deg,#080509,#2a0b4e,#b24bdb,#13091c,#050505)}
+.foil-green{background-image:linear-gradient(125deg,#04100a,#0b3d24,#3ddc97,#07130d,#04100a)}
+.foil-gold{background-image:linear-gradient(125deg,#120c04,#4a3208,#ffd166,#171005,#120c04)}
+.foil-chrome{background-image:linear-gradient(125deg,#050505,#1c1c1c,#6d6d6d,#141414,#050505)}
+@keyframes foil{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes shine{0%{transform:translateX(-90%)}45%,100%{transform:translateX(90%)}}
+.category{position:absolute;top:14px;left:14px;padding:7px 12px;border:1px solid #fff2;border-radius:999px;background:#05070dbb;backdrop-filter:blur(8px);font-size:9px;letter-spacing:.14em;color:#d6dbe6;font-weight:700;z-index:2}
+.design-body{padding:22px}
+.design-number{font-size:9px;letter-spacing:.24em;color:var(--faint);font-weight:700}
+.design-body h3{font-size:24px;letter-spacing:-.03em;margin:8px 0 6px}
+.design-body p{color:var(--muted);font-size:13px;min-height:40px;margin:0 0 16px}
+.design-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:16px}
+.design-foot strong{font-size:16px;font-family:var(--head);color:var(--accent)}
+.process{background:#070a11;border-top:1px solid var(--line);border-bottom:1px solid var(--line);max-width:none;padding-left:max(30px,calc((100vw - 1220px)/2));padding-right:max(30px,calc((100vw - 1220px)/2))}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.steps>div{background:var(--bg2);min-height:240px;padding:32px 28px}
+.steps b{color:var(--accent);font-size:12px;font-family:var(--head)}
+.steps h3{font-size:22px;letter-spacing:-.03em;margin:12px 0 8px}
+.steps p{color:var(--muted);font-size:13px;margin:0;max-width:300px}
+.contact{display:flex;justify-content:space-between;align-items:end;gap:40px;flex-wrap:wrap}
+.contact h2{font-size:clamp(48px,7vw,100px);line-height:.86;letter-spacing:-.07em;margin:14px 0 20px}
+.contact h2 em{font-style:normal;color:var(--faint)}
+.contact p{color:var(--muted);max-width:440px}
+footer{max-width:1280px;margin:auto;padding:34px 30px;border-top:1px solid var(--line);display:flex;align-items:center;gap:20px;color:var(--faint);font-size:11px;flex-wrap:wrap}
+footer img{width:44px;height:44px;object-fit:contain;border-radius:10px}
+footer b{color:var(--text);font-family:var(--head);letter-spacing:.08em}
+footer a{margin-left:auto;color:var(--muted)}
+footer a:hover{color:var(--accent)}
+.seo-note{max-width:1280px;margin:0 auto;padding:0 30px 30px;color:#3a4254;font-size:10.5px;letter-spacing:.1em}
+@media(max-width:1000px){.hero{grid-template-columns:1fr;padding:130px 20px 60px}.hero-stage{order:-1;height:52vh;min-height:340px}.design-grid{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:repeat(2,1fr)}.section-head{display:block}.section-head p{margin-top:20px}}
+@media(max-width:640px){.nav nav{display:none}.design-grid,.steps{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
 <header class="nav">
-  <a class="brand" href="#home" aria-label="FOLJE EXPRESS"><img src="./logo.png" alt="FOLJE EXPRESS"></a>
-  <button class="menu" aria-label="Hap menunë">☰</button>
+  <a class="brand" href="#home" aria-label="FOLJE EXPRESS"><img src="./logo.png" alt="FOLJE EXPRESS logo"><b>FOLJE EXPRESS</b></a>
   <nav>
     <a href="#home">Ballina</a>
     <a href="#designs">Dizajnet</a>
     <a href="#process">Procesi</a>
     <a href="#contact">Kontakt</a>
   </nav>
+  <a class="btn primary" href="https://folje-express.vercel.app/">Hap App-in e Plotë ↗</a>
 </header>
 
 <main id="home">
 <section class="hero">
   <div class="hero-copy">
-    <span class="eyebrow">FOLJE EXPRESS / AUTOMOTIVE DESIGN</span>
+    <span class="eyebrow">FOLJE EXPRESS / AUTOMOTIVE WRAP STUDIO</span>
     <h1>Ndrysho<br><em>pamjen.</em></h1>
-    <p>Folie me ngjyra dhe dizajne për makina dhe motoçikleta. Dizajni yt, stili yt.</p>
+    <p>Folie premium me ngjyra dhe dizajne për makina dhe motoçikleta — ndërrim ngjyre (car wrap), dizajne custom dhe mbrojtje PPF. Një pamje e re, e ndërtuar rreth stilit tënd, nga FoljeExpress.</p>
     <div class="actions">
-      <a class="btn primary" href="#designs">Shiko dizajnet</a>
-      <a class="btn" href="#contact">Na kontakto</a>
+      <a class="btn primary big" href="#designs">Shiko dizajnet ↗</a>
+      <a class="btn big" href="#contact">Na kontakto</a>
     </div>
   </div>
   <div class="hero-stage">
-    <div id="foil3d" aria-label="Model 3D interaktiv i një sipërfaqeje me folie"></div>
-    <div class="stage-label"><span>3D</span> FOLJE EXPRESS</div>
+    <div id="foil3d" aria-label="Model 3D interaktiv — folje express"></div>
+    <div class="stage-label"><b>3D</b> FOLJE EXPRESS</div>
   </div>
 </section>
 
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-row"><span>FOLJE EXPRESS ✦</span><span>CAR WRAP ✦</span><span>NDËRRIM NGJYRE ✦</span><span>MATTE · GLOSS · SATIN · CHROME ✦</span><span>MOTOÇIKLETA ✦</span><span>PPF MBROJTJE ✦</span><span>DIZAJNE CUSTOM ✦</span><span>FOLJEEXPRESS ✦</span></div>
+    <div class="marquee-row"><span>FOLJE EXPRESS ✦</span><span>CAR WRAP ✦</span><span>NDËRRIM NGJYRE ✦</span><span>MATTE · GLOSS · SATIN · CHROME ✦</span><span>MOTOÇIKLETA ✦</span><span>PPF MBROJTJE ✦</span><span>DIZAJNE CUSTOM ✦</span><span>FOLJEEXPRESS ✦</span></div>
+  </div>
+</div>
+
 <section id="designs" class="section">
   <div class="section-head">
-    <span class="eyebrow">DESIGN LIBRARY</span>
-    <h2>Dizajnet tona.</h2>
-    <p>Fotot reale të dizajneve do të vendosen këtu sapo t’i dërgosh. Çdo dizajn mund të ketë çmim dhe përshkrim.</p>
+    <div><span class="eyebrow">DESIGN LIBRARY</span><h2>Dizajnet <em>tona.</em></h2></div>
+    <p>Folie me finitura premium për makina dhe motoçikleta. Katalogu i plotë me foto, çmime dhe porosi online gjendet në aplikacionin kryesor të Folje Express.</p>
   </div>
   <div class="design-grid">
-    <article class="design-card placeholder">
-      <div class="foil-preview foil-red"></div><div><span>01</span><h3>Design #01</h3><p>Foto së shpejti</p></div>
-    </article>
-    <article class="design-card placeholder">
-      <div class="foil-preview foil-blue"></div><div><span>02</span><h3>Design #02</h3><p>Foto së shpejti</p></div>
-    </article>
-    <article class="design-card placeholder">
-      <div class="foil-preview foil-purple"></div><div><span>03</span><h3>Design #03</h3><p>Foto së shpejti</p></div>
-    </article>
+    <article class="design-card"><div class="foil-preview foil-chrome" style="position:relative"><span class="category">Makina</span></div><div class="design-body"><div class="design-number">FOLJE EXPRESS</div><h3>Gloss Midnight Black</h3><p>Folie gloss e zezë e thellë — pamje sportive dhe elegante për çdo makinë.</p><div class="design-foot"><strong>Na kontakto</strong><a class="btn" href="#contact">Ofertë</a></div></div></article>
+    <article class="design-card"><div class="foil-preview foil-red" style="position:relative"><span class="category">Të dyja</span></div><div class="design-body"><div class="design-number">FOLJE EXPRESS</div><h3>Satin Race Red</h3><p>E kuqe satine me shkëlqim të butë — për makina dhe motoçikleta që duan vëmendje.</p><div class="design-foot"><strong>Na kontakto</strong><a class="btn" href="#contact">Ofertë</a></div></div></article>
+    <article class="design-card"><div class="foil-preview foil-blue" style="position:relative"><span class="category">Motoçikleta</span></div><div class="design-body"><div class="design-number">FOLJE EXPRESS</div><h3>Chrome Electric Blue</h3><p>Efekt kromi me ton elektrik — përfundim premium me reflektim të lartë.</p><div class="design-foot"><strong>Na kontakto</strong><a class="btn" href="#contact">Ofertë</a></div></div></article>
+    <article class="design-card"><div class="foil-preview foil-purple" style="position:relative"><span class="category">Makina</span></div><div class="design-body"><div class="design-number">FOLJE EXPRESS</div><h3>Flip Violet</h3><p>Ngjyrë flip që ndryshon tonin sipas këndit të dritës — gjithmonë në qendër të vëmendjes.</p><div class="design-foot"><strong>Na kontakto</strong><a class="btn" href="#contact">Ofertë</a></div></div></article>
+    <article class="design-card"><div class="foil-preview foil-green" style="position:relative"><span class="category">Të dyja</span></div><div class="design-body"><div class="design-number">FOLJE EXPRESS</div><h3>British Green</h3><p>E gjelbër e thellë me shkëlqim klasik — elegancë e përjetshme.</p><div class="design-foot"><strong>Na kontakto</strong><a class="btn" href="#contact">Ofertë</a></div></div></article>
+    <article class="design-card"><div class="foil-preview foil-gold" style="position:relative"><span class="category">Motoçikleta</span></div><div class="design-body"><div class="design-number">FOLJE EXPRESS</div><h3>Brushed Gold</h3><p>Efekt i brushed gold — detaje luksoze për motoçikleta dhe detaje makinash.</p><div class="design-foot"><strong>Na kontakto</strong><a class="btn" href="#contact">Ofertë</a></div></div></article>
   </div>
 </section>
 
 <section id="process" class="section process">
   <div class="section-head">
-    <span class="eyebrow">SI FUNKSIONON</span>
-    <h2>Ngjyra. Dizajn. Aplikim.</h2>
+    <div><span class="eyebrow">SI FUNKSIONON</span><h2>Ngjyra. Dizajn. <em>Aplikim.</em></h2></div>
   </div>
   <div class="steps">
-    <div><b>01</b><h3>Zgjedh dizajnin</h3><p>Zgjedh një nga dizajnet ose na trego çfarë pamjeje dëshiron.</p></div>
-    <div><b>02</b><h3>Përgatitja</h3><p>Materiali dhe dizajni përgatiten me kujdes për automjetin.</p></div>
-    <div><b>03</b><h3>Aplikimi</h3><p>Folia aplikohet në mënyrë të pastër dhe precize.</p></div>
+    <div><b>01</b><h3>Zgjedh stilin</h3><p>Shfleto dizajnet ose kërko ngjyrën që të përfaqëson — gloss, matte, satin, chrome ose flip.</p></div>
+    <div><b>02</b><h3>Përgatitja</h3><p>Folia pritet dhe përgatitet me precizion për automjetin tënd — pa surpriza.</p></div>
+    <div><b>03</b><h3>Aplikimi</h3><p>Aplikim i pastër me fokus te detajet, dhe përfundim që të kthen kokat.</p></div>
+    <div><b>04</b><h3>Mbrojtja</h3><p>Opsionalisht shtojmë shtresë mbrojtëse (PPF) që ngjyra të zgjasë me vite.</p></div>
   </div>
 </section>
 
 <section id="contact" class="section contact">
   <div>
-    <span class="eyebrow">KONTAKT</span>
-    <h2>Gati për një pamje tjetër?</h2>
-    <p>Na kontakto për dizajnin, ngjyrën dhe çmimin.</p>
+    <span class="eyebrow">FOLJE EXPRESS / KONTAKT</span>
+    <h2>Gati për një<br><em>pamje tjetër?</em></h2>
+    <p>Na kontakto për dizajnin, ngjyrën dhe çmimin. Forma e plotë e kontaktit, Color Lab 3D dhe paneli i porosisë gjenden në aplikacionin kryesor.</p>
   </div>
-  <a class="btn primary" href="mailto:">Na kontakto</a>
+  <div class="actions">
+    <a class="btn primary big" href="https://folje-express.vercel.app/#contact">Dërgo kërkesë ↗</a>
+    <a class="btn big" href="https://folje-express.vercel.app/#color-lab">Color Lab 3D</a>
+  </div>
 </section>
 </main>
 
-<footer><strong>FOLJE EXPRESS</strong><span>© <span id="year"></span> FOLJE EXPRESS</span><a href="#home">Lart ↑</a></footer>
-<script type="module" src="./script.js"></script>
+<p class="seo-note">folje · folje express · foljeexpress · folje makinash · car wrap · vinyl wrap · ndërrim ngjyre · Kosovë</p>
+
+<footer>
+  <img src="./logo.png" alt="FOLJE EXPRESS">
+  <span><b>FOLJE EXPRESS</b> — Automotive Wrap Studio</span>
+  <span>© <span id="year"></span> FOLJE EXPRESS. Të gjitha të drejtat e rezervuara.</span>
+  <a href="#home">Lart ↑</a>
+</footer>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+document.getElementById("year").textContent = new Date().getFullYear();
+const el = document.querySelector("#foil3d");
+if (el && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, .1, 100);
+  camera.position.set(0, 0, 5.6);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  el.appendChild(renderer.domElement);
+  const knot = new THREE.Mesh(
+    new THREE.TorusKnotGeometry(1.35, .42, 220, 32, 2, 3),
+    new THREE.MeshPhysicalMaterial({ color: 0x1c1f26, metalness: .95, roughness: .16, clearcoat: 1, clearcoatRoughness: .06 })
+  );
+  scene.add(knot);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.05, .012, 8, 160), new THREE.MeshBasicMaterial({ color: 0x5bc7ff, transparent: true, opacity: .5 }));
+  ring.rotation.x = Math.PI / 2.6;
+  scene.add(ring);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x0a0d14, 1.6));
+  const key = new THREE.DirectionalLight(0xffffff, 3.4); key.position.set(3, 4, 5); scene.add(key);
+  const cyan = new THREE.PointLight(0x5bc7ff, 26, 9); cyan.position.set(-3, 1.2, 2); scene.add(cyan);
+  const red = new THREE.PointLight(0xff315b, 18, 9); red.position.set(3, -2, 1.5); scene.add(red);
+  const resize = () => { const r = el.getBoundingClientRect(); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); renderer.setSize(r.width, r.height, false); };
+  addEventListener("resize", resize); resize();
+  let mx = 0, my = 0;
+  addEventListener("pointermove", (e) => { mx = (e.clientX / innerWidth - .5) * 2; my = (e.clientY / innerHeight - .5) * 2; }, { passive: true });
+  const tick = () => {
+    const t = performance.now() / 1000;
+    knot.rotation.x = t * .16; knot.rotation.y = t * .3; ring.rotation.z = -t * .11;
+    camera.position.x += (mx * .5 - camera.position.x) * .05;
+    camera.position.y += (-my * .4 - camera.position.y) * .05;
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  };
+  tick();
+}
+</script>
 </body>
 </html>

@@ -1,8 +1,11 @@
 node_modules
 .next
 out
+data
+public/uploads
 .env
 .env.local
 .env*.local
 .vercel
 npm-debug.log*
+*.tsbuildinfo
