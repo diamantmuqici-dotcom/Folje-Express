@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { translate, type Lang } from "@/lib/i18n";
 
 type Finish = {
   id: string;
@@ -27,14 +28,12 @@ const FINISHES: Finish[] = [
  * physical car-paint material; visitors pick a foil finish and watch the
  * material update live. Built with three.js only (no extra deps).
  */
-export default function ColorLab() {
+export default function ColorLab({ lang = "sq" }: { lang?: Lang }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
-  const materialRef = useRef<{
-    set(f: Finish): void;
-    spin(): void;
-  } | null>(null);
+  const materialRef = useRef<{ set(f: Finish): void; spin(): void } | null>(null);
   const [active, setActive] = useState<Finish>(FINISHES[0]);
   const [ready, setReady] = useState(false);
+  const t = (k: string, v?: Record<string, string | number>) => translate(lang, k, v);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -95,7 +94,7 @@ export default function ColorLab() {
       const stripeGeo = new THREE.TorusGeometry(2.62, 0.02, 8, 120, Math.PI / 1.7);
       const stripeMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.75 });
       const stripe = new THREE.Mesh(stripeGeo, stripeMat);
-      stripe.rotation.set(Math.PI / 2 - 0.42, 0, -Math.PI / 3.1 + Math.PI / 3.1);
+      stripe.rotation.set(Math.PI / 2 - 0.42, 0, 0);
       stripe.rotation.z = 0.12;
       stripe.rotation.y = Math.PI / 2.2;
       scene.add(stripe);
@@ -200,19 +199,16 @@ export default function ColorLab() {
     <div className="colorlab">
       <div className="colorlab-stage">
         <div className="colorlab-canvas" ref={hostRef} />
-        {!ready && <div className="colorlab-loading">Duke ngarkuar 3D…</div>}
-        <div className="colorlab-hint">↔ Tërhiq për ta rrotulluar</div>
+        {!ready && <div className="colorlab-loading">{t("lab.loading")}</div>}
+        <div className="colorlab-hint">{t("lab.hint")}</div>
       </div>
       <div className="colorlab-panel">
-        <span className="eyebrow">ZGJIDH FOLJEN</span>
+        <span className="eyebrow">{t("lab.choose")}</span>
         <h3>
-          {active.label} <em>live në 3D.</em>
+          {active.label} <em>{t("lab.live")}</em>
         </h3>
-        <p>
-          Kjo është pamja e përafërt e finiturës <b>{active.label}</b> mbi karroceri. Zgjidh një
-          nga mostrat dhe shikoje si ndryshon materiali në kohë reale.
-        </p>
-        <div className="swatches" role="radiogroup" aria-label="Zgjidh ngjyrën e foljes">
+        <p>{t("lab.desc", { finish: active.label })}</p>
+        <div className="swatches" role="radiogroup" aria-label={t("lab.choose")}>
           {FINISHES.map((f) => (
             <button
               key={f.id}
@@ -228,7 +224,7 @@ export default function ColorLab() {
           ))}
         </div>
         <a className="btn primary" href="#contact">
-          Kërko ofertë për {active.label} <span>↗</span>
+          {t("lab.cta", { finish: active.label })}
         </a>
       </div>
     </div>

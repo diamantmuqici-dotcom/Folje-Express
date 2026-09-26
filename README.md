@@ -1,78 +1,119 @@
-# FOLJE EXPRESS 🚗✨
+# FOLJE EXPRESS — Automotive Wrap Studio Platform
 
-Premium Next.js 16 website + full backend for **Folje Express** — an automotive foil / car-wrap studio.
-Dark 3D design (three.js), interactive Color Lab visualizer, private admin panel, contact inbox,
-visit stats, built-in DDoS/abuse protection and full Albanian SEO ("folje", "folje express", "foljeexpress").
+Premium Next.js 16 website + full business backend for **Folje Express** — car & motorcycle
+wrapping studio. Dark 3D design (three.js), interactive Color Lab visualizer, trilingual public
+site (Albanian / English / German), team accounts with four permission roles, order inbox,
+complete audit logging, DDoS / injection protection and deep SEO for
+"folje", "folje express", "foljeexpress".
 
-## Routes
+---
 
-| Route | What it is |
+## 1. First login
+
+On the very first start the system seeds one **Owner** account:
+
+| Username | Password | Role |
+| --- | --- | --- |
+| `lorik` | `lorikfx` | Owner |
+
+Log in at `/admin`, then open **Profili** to rename it and change the password immediately.
+From **Llogaritë** you can create the rest of the team.
+
+> Credentials are stored salted + HMAC-hashed, never in plain text. Sessions are HMAC-signed
+> HttpOnly cookies (12 h). Deleting an account instantly kills its sessions.
+
+## 2. Roles & permissions
+
+| Ability | Staff | Admin | Co Owner | Owner |
+| --- | :--: | :--: | :--: | :--: |
+| View order inbox | ✔ | ✔ | ✔ | ✔ |
+| Accept / decline / reopen orders | ✔ | ✔ | ✔ | ✔ |
+| View stats dashboard | – | ✔ | ✔ | ✔ |
+| Add / update / replace designs & prices | – | ✔ | ✔ | ✔ |
+| Hide / feature / reorder designs | – | ✔ | ✔ | ✔ |
+| **Delete** designs or messages | – | ✔ | – | ✔ |
+| Edit site settings (texts, contacts, EN/DE copy, accent) | – | ✔ | ✔ | ✔ |
+| View **audit log** | – | – | ✔ | ✔ |
+| Create / edit / delete **Staff & Admin** accounts | – | – | ✔ | ✔ |
+| Create / edit / delete **Co Owner & Owner** accounts | – | – | – | ✔ |
+| Change own name / password | ✔ | ✔ | ✔ | ✔ |
+| Wipe entire site content (reset) | – | – | – | ✔ |
+
+Everything above is enforced **server-side** in `lib/permissions.ts` — the UI only mirrors it.
+
+## 3. Audit log (who did what)
+
+Every sensitive action is written to an append-only trail (newest first, 1000 entries):
+logins (success, failure, throttled), logouts, design create / update / price change /
+image replace / delete / hide / feature / reorder, order accept / decline / reopen,
+message delete, settings update, account create / update / delete, profile change, site reset.
+Each entry stores timestamp, actor, role, action, human-readable detail (e.g. old → new price)
+and the source IP. Visible only to **Co Owner** and **Owner**.
+
+## 4. Routes
+
+| Route | Purpose |
 | --- | --- |
-| `/` | Public 3D website (hero scene, design library w/ search & filters, Color Lab 3D, process, contact form) |
-| `/admin` | Private panel: products, prices, photos, ordering, messages inbox, site settings, stats |
-| `/api/designs` | Public published-design API |
-| `/api/settings` | Public site settings API |
-| `/api/messages` | Public contact/order requests (rate limited + honeypot) |
-| `/api/track` | Anonymous visit beacon (feeds admin stats) |
-| `/api/admin/login` · `/logout` | Session auth (HMAC cookie, brute-force throttled) |
-| `/api/admin/designs` | CRUD: create, update price/title/description/category/badge, replace image, feature, hide, reorder, delete |
-| `/api/admin/settings` | Read/update hero copy, contact info, socials, accent colour |
-| `/api/admin/messages` | Inbox: list, mark read, delete |
-| `/api/admin/stats` | Visits, design & message counters |
+| `/` | Public trilingual 3D website (SQ / EN / DE switcher, remembers choice) |
+| `/admin` | Team panel: orders, designs, settings, accounts, audit log, profile |
+| `/api/designs` · `/api/settings` | Public content APIs |
+| `/api/messages` | Public order requests (rate limited + honeypot) |
+| `/api/track` | Anonymous visit beacon for stats |
+| `/api/admin/me` | Session bootstrap for the panel |
+| `/api/admin/login` · `/logout` | Account auth (throttled per IP and per username) |
+| `/api/admin/designs` | Product CRUD with role checks + audit |
+| `/api/admin/messages` | Inbox: accept / decline / read / delete + audit |
+| `/api/admin/settings` | Site identity incl. EN/DE hero copy + audit |
+| `/api/admin/stats` | Visits, orders, designs, messages |
+| `/api/admin/accounts` | Team management (role-limited) + audit |
+| `/api/admin/logs` | Audit trail (Co Owner / Owner) |
+| `/api/admin/profile` | Self-service rename / password change |
+| `/api/admin/reset` | Owner-only content wipe |
 | `/sitemap.xml` · `/robots.txt` · `/manifest.webmanifest` | SEO + PWA |
 
-## What the admin can do
+## 5. Design & 3D
 
-- **Add products** with photo, price, description, category, badge ("E RE", "POPULLOR"…)
-- **Change price / title / description** of any product at any time (edit modal)
-- **Replace the photo** of an existing product
-- **Delete products**, **hide/show** them, mark them **★ featured**
-- **Reorder** products with ↑/↓ buttons
-- **Read customer messages** from the contact form (with WhatsApp shortcut, read/unread, delete)
-- **Edit the whole website identity**: business name, tagline, phone, WhatsApp, Instagram, TikTok,
-  email, address, opening hours, hero headline/subtitle, about text and the **accent colour**
-- **See stats**: unique visits, visible designs, message counts
+- Hero: chrome torus-knot sculpture, particle field, orbit rings, mouse parallax (three.js)
+- **Color Lab**: drag-to-rotate 3D body panel with 8 live foil finishes (gloss/matte/satin/chrome/flip/gold…)
+- Tilt cards with hover glare, animated foil swatches, scroll reveals, marquee
+- All scenes pause on hidden tabs and honour `prefers-reduced-motion`
+- **No emoji / icons anywhere** — typography-only interface
 
-## Security / DDoS protection
+## 6. Security
 
-- `middleware.ts` runs on every request:
-  - global per-IP flood limit (600 req/min) + stricter limits per route (pages, API, admin, login, contact, tracking)
-  - blocks known malicious scanner/bot user agents (sqlmap, nikto, zgrab, hydra, …)
-  - blocks SQL-injection / path-traversal patterns aimed at the API
-  - attaches security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- Admin login: HMAC-signed HttpOnly cookie + per-IP brute-force throttle (6 tries/15 min, 30/day)
-- Contact form: honeypot field + per-IP limit + server-side validation & sanitising
-- Uploads: type-checked, size-capped (12 MB), random UUID filenames, traversal-safe deletion
+- `middleware.ts`: global per-IP flood limit (600 req/min) + per-route caps, malicious
+  scanner/bot UA blocking, SQL-injection & path-traversal pattern blocking (URL-decoded),
+  CSP / HSTS / X-Frame-Options / Referrer-Policy / Permissions-Policy headers
+- Login brute-force throttle (per IP + per username), salted HMAC password hashes,
+  constant-time compares, HMAC-signed session cookies
+- Contact form honeypot + validation; uploads type/size checked, UUID names, traversal-safe deletes
+- On Vercel this layer combines with the platform edge protection; put Cloudflare/WAF in front
+  for enterprise-grade mitigation without code changes
 
-> On serverless (Vercel) the in-memory limiter is per instance; it is a strong first layer and
-> combines with Vercel's own edge protection. For heavy traffic you can add Vercel WAF /
-> Cloudflare in front without code changes.
+## 7. Storage
 
-## Storage
+- **Production (Vercel):** set `BLOB_READ_WRITE_TOKEN` → JSON data private in Vercel Blob,
+  product photos as public Blob URLs.
+- **Development:** automatic local fallback (`./data/*.json`, `./public/uploads`), git-ignored.
+- Bundled media lives in `./public/media` (logo + the forged-carbon wrap product photo).
 
-- **Production (Vercel):** set `BLOB_READ_WRITE_TOKEN` → data JSON lives privately in Vercel Blob,
-  product photos are public Blob URLs.
-- **Development / any Node host:** without the token the app automatically falls back to local
-  files — `./data/*.json` (git-ignored) and `./public/uploads` for photos. Everything works,
-  nothing extra to install.
+## 8. Setup & deploy
 
-## Setup
+```bash
+npm install
+cp .env.example .env.local   # optional in dev
+npm run dev                  # http://localhost:3000  →  /admin (lorik / lorikfx)
+```
 
-1. `npm install`
-2. Copy `.env.example` → `.env.local` and set at least `ADMIN_PASSWORD`.
-3. `npm run dev` → open http://localhost:3000 and `/admin`.
-4. Deploy: import the repo into **Vercel** (auto-detected Next.js), add a Blob store (optional)
-   and the env vars (`ADMIN_PASSWORD`, `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_SITE_URL`).
+Deploy: import the repo into **Vercel**, add env vars (`BLOB_READ_WRITE_TOKEN`,
+`NEXT_PUBLIC_SITE_URL`). The GitHub Pages workflow publishes the standalone `index.html`
+as a static SEO fallback.
 
-The GitHub Pages workflow still deploys the standalone `index.html` as a static SEO fallback site.
+After deploying, submit the domain in Google Search Console and request indexing so
+"folje express" searches find the site quickly.
 
-## SEO
+## 9. Catalogue seed
 
-- Keyword-targeted metadata & Open Graph for: *folje, folje express, foljeexpress, folje makinash,
-  car wrap, vinyl wrap, ndërrim ngjyre, wrap Kosovë…*
-- `AutoBusiness` JSON-LD structured data (name, alternates, phone, address, hours, services)
-- `sitemap.xml`, `robots.txt`, web manifest (installable PWA), semantic Albanian content,
-  descriptive alt text, fast LCP (lazy images, suspended 3D when tab hidden / reduced motion).
-
-After deploying, submit the site in [Google Search Console](https://search.google.com/search-console)
-and request indexing for the homepage so "folje express" searches find it quickly.
+The starter product **Forged Carbon Shield — 50€** (recreation of the real scooter wrap,
+forged-carbon marble pattern on the centre panels) ships in `public/media` and appears
+automatically until you publish your own designs.

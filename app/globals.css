@@ -974,3 +974,102 @@ footer { max-width: var(--max); margin: auto; padding: 0 30px 34px; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ================================================================== */
+/* v4 additions — roles, orders, accounts, audit log, language        */
+/* ================================================================== */
+
+/* language switcher in nav */
+.lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.lang-switch button {
+  background: #0c1018; color: var(--faint); border: 0; padding: 8px 11px;
+  font-size: 10.5px; font-weight: 800; letter-spacing: .08em; transition: .15s;
+}
+.lang-switch button + button { border-left: 1px solid var(--line); }
+.lang-switch button:hover { color: #fff; }
+.lang-switch button.active { background: var(--accent); color: #04121c; }
+
+/* contact info labels */
+.contact-info b {
+  font-size: 9.5px; letter-spacing: .18em; color: var(--faint); font-weight: 800;
+  border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; text-transform: uppercase;
+}
+
+/* about list markers (pure CSS, no icons) */
+.about-list li::before { content: ""; width: 18px; height: 2px; background: var(--accent); flex-shrink: 0; }
+
+/* search clear (text label) */
+.search .clear {
+  position: absolute; right: 8px; background: #121826; border: 1px solid var(--line);
+  color: var(--muted); font-size: 9.5px; font-weight: 700; letter-spacing: .06em;
+  padding: 4px 9px; border-radius: 999px;
+}
+.search .clear:hover { color: #fff; border-color: var(--accent); }
+
+/* role chip in admin top bar */
+.role-chip {
+  font-style: normal; font-size: 9.5px; letter-spacing: .14em; font-weight: 800;
+  color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 2px 9px;
+}
+
+/* order status chips */
+.chip-status {
+  border-radius: 999px; padding: 3px 11px; font-size: 9.5px; letter-spacing: .12em; font-weight: 800;
+  border: 1px solid;
+}
+.chip-status.pending { color: var(--gold); border-color: #ffd16655; background: #ffd16612; }
+.chip-status.accepted { color: var(--green); border-color: #3ddc9755; background: #3ddc9712; }
+.chip-status.declined { color: #ff9d9d; border-color: #ff315b55; background: #ff315b12; }
+
+/* order decision buttons */
+.msg-actions .accept { color: var(--green); border-color: #3ddc9744 !important; }
+.msg-actions .accept:hover { background: #3ddc9718; border-color: var(--green) !important; }
+.msg-actions .decline { color: #ff9d9d; border-color: #ff315b44 !important; }
+.msg-actions .decline:hover { background: #ff315b18; border-color: var(--red) !important; }
+
+/* accounts */
+.account-item { grid-template-columns: 86px 1fr auto; }
+.account-avatar {
+  width: 86px; height: 86px; border-radius: 14px;
+  display: grid; place-items: center;
+  background: linear-gradient(140deg, var(--accent-soft), #0d1220);
+  border: 1px solid var(--line);
+  color: var(--accent); font-family: var(--font-head); font-weight: 700; font-size: 26px; letter-spacing: .02em;
+}
+
+/* audit log table */
+.logs-wrap { border: 1px solid var(--line); border-radius: 16px; overflow: auto; background: #0a0e15; max-height: 68svh; }
+.logs-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 760px; }
+.logs-table th {
+  text-align: left; padding: 13px 16px; font-size: 9.5px; letter-spacing: .18em; color: var(--faint);
+  border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #0c1018; font-weight: 800;
+}
+.logs-table td { padding: 11px 16px; border-bottom: 1px solid #ffffff0a; color: var(--muted); vertical-align: top; }
+.logs-table td b { color: var(--text); }
+.logs-table code { color: var(--accent); font-size: 11px; background: #5bc7ff12; padding: 2px 7px; border-radius: 6px; }
+.logs-table tr.log-danger td { background: #ff315b0a; }
+.logs-table tr.log-danger code { color: #ff9d9d; background: #ff315b14; }
+.logs-table tr.log-login td { background: #3ddc9708; }
+.logs-empty { text-align: center; color: var(--faint); padding: 40px !important; }
+
+/* danger zone (owner) */
+.danger-zone {
+  border: 1px solid #ff315b44; background: #ff315b0a; border-radius: 18px; padding: 24px 26px;
+  display: grid; gap: 10px; justify-items: start;
+}
+.danger-zone h3 { margin: 0; font-size: 16px; color: #ffc2c2; }
+.danger-zone p { margin: 0; color: var(--muted); font-size: 13px; }
+
+/* admin login stacked form */
+.admin-login form { flex-direction: column; }
+.admin-login form .btn { width: 100%; }
+
+@media (max-width: 900px) {
+  .account-item { grid-template-columns: 70px 1fr; }
+  .account-avatar { width: 70px; height: 70px; font-size: 20px; }
+}
+@media (max-width: 560px) {
+  .account-item { grid-template-columns: 1fr; }
+  .account-avatar { width: 100%; height: 90px; }
+  .lang-switch { order: 5; }
+}

@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import type { Role } from "./permissions";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
@@ -37,9 +38,19 @@ export type SiteSettings = {
   heroTitle: string;
   heroHighlight: string;
   heroSubtitle: string;
-  accent: string;
+  heroTitleEn: string;
+  heroHighlightEn: string;
+  heroSubtitleEn: string;
+  heroTitleDe: string;
+  heroHighlightDe: string;
+  heroSubtitleDe: string;
   about: string;
+  aboutEn: string;
+  aboutDe: string;
+  accent: string;
 };
+
+export type OrderStatus = "pending" | "accepted" | "declined";
 
 export type Message = {
   id: string;
@@ -50,8 +61,29 @@ export type Message = {
   service: string;
   designId: string;
   message: string;
+  status: OrderStatus;
   createdAt: string;
   read: boolean;
+};
+
+export type Account = {
+  id: string;
+  username: string;
+  salt: string;
+  passHash: string;
+  role: Role;
+  createdAt: string;
+  createdBy: string;
+};
+
+export type LogEntry = {
+  id: string;
+  at: string;
+  actor: string;
+  role: string;
+  action: string;
+  detail: string;
+  ip: string;
 };
 
 export type Stats = {
@@ -113,7 +145,10 @@ async function writeJSON(blobPath: string, filePath: string, data: unknown) {
   await writeText(blobPath, filePath, JSON.stringify(data, null, 2));
 }
 
-/** Save an uploaded image; returns its public URL. */
+/* ------------------------------------------------------------------ */
+/* Images                                                              */
+/* ------------------------------------------------------------------ */
+
 export async function saveImage(file: File): Promise<string> {
   const ext = (file.name.split(".").pop() || "jpg").replace(/[^a-z0-9]/gi, "").toLowerCase() || "jpg";
   const name = `${crypto.randomUUID()}.${ext}`;
@@ -128,12 +163,11 @@ export async function saveImage(file: File): Promise<string> {
   return `/uploads/${name}`;
 }
 
-/** Delete an image previously returned by saveImage(). Safe to call blindly. */
 export async function removeImage(url: string) {
   if (!url) return;
   try {
     if (url.startsWith("/uploads/")) {
-      const name = path.basename(url); // prevent traversal
+      const name = path.basename(url); // traversal-safe
       await fs.unlink(path.join(UPLOAD_DIR, name)).catch(() => {});
       return;
     }
@@ -141,6 +175,7 @@ export async function removeImage(url: string) {
       const { del } = await import("@vercel/blob");
       await del(url);
     }
+    /* /media/* seeds are static assets — never deleted */
   } catch {
     /* ignore */
   }
@@ -153,52 +188,25 @@ export async function removeImage(url: string) {
 const DESIGNS_BLOB = "data/designs.json";
 const DESIGNS_FILE = path.join(DATA_DIR, "designs.json");
 
-const demoDesigns: Design[] = [
+/** Starter catalogue — the real forged-carbon scooter work (50€). */
+const seedDesigns: Design[] = [
   {
-    id: "demo-1",
-    title: "Gloss Midnight Black",
-    price: "Na kontakto",
-    description: "Folie gloss e zezë e thellë — pamje sportive dhe elegante për çdo makinë.",
-    category: "Makina",
-    image: "",
-    badge: "POPULLOR",
-    featured: true,
-    visible: true,
-    createdAt: new Date(0).toISOString(),
-    updatedAt: new Date(0).toISOString(),
-    order: 1,
-  },
-  {
-    id: "demo-2",
-    title: "Satin Race Red",
-    price: "Na kontakto",
-    description: "E kuqe satine me shkëlqim të butë — për makina dhe motoçikleta që duan vëmendje.",
-    category: "Të dyja",
-    image: "",
-    badge: "E RE",
-    featured: true,
-    visible: true,
-    createdAt: new Date(0).toISOString(),
-    updatedAt: new Date(0).toISOString(),
-    order: 2,
-  },
-  {
-    id: "demo-3",
-    title: "Chrome Electric Blue",
-    price: "Na kontakto",
-    description: "Efekt kromi me ton elektrik — përfundim premium me reflektim të lartë.",
+    id: "seed-forged-carbon",
+    title: "Forged Carbon Shield",
+    price: "50€",
+    description:
+      "Folie forged carbon me efekt mermeri, e aplikuar në panelin qendror të motoçikletës — punim real nga studioja jonë. Mbrojtje ndaj gërvishtjeve me shkëlqim të thellë gloss.",
     category: "Motoçikleta",
-    image: "",
-    badge: "",
-    featured: false,
+    image: "/media/forged-carbon-wrap.jpg",
+    badge: "PUNIM REAL",
+    featured: true,
     visible: true,
-    createdAt: new Date(0).toISOString(),
-    updatedAt: new Date(0).toISOString(),
-    order: 3,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
+    order: 0,
   },
 ];
 
-/** Fill in any fields missing from older stored records (schema migration). */
 function normalizeDesign(raw: Partial<Design>, index: number): Design {
   return {
     id: String(raw.id || crypto.randomUUID()),
@@ -218,7 +226,8 @@ function normalizeDesign(raw: Partial<Design>, index: number): Design {
 
 export async function readDesigns(): Promise<Design[]> {
   const data = await readJSON<unknown>(DESIGNS_BLOB, DESIGNS_FILE, null);
-  if (!Array.isArray(data) || data.length === 0) return demoDesigns;
+  // Clone seeds so callers can never mutate the module-level defaults.
+  if (!Array.isArray(data) || data.length === 0) return seedDesigns.map((d) => ({ ...d }));
   return data.map((d, i) => normalizeDesign(d as Partial<Design>, i));
 }
 
@@ -247,10 +256,22 @@ export const defaultSettings: SiteSettings = {
   heroTitle: "Ndrysho",
   heroHighlight: "pamjen.",
   heroSubtitle:
-    "Folie premium me ngjyra dhe dizajne për makina dhe motoçikleta. Një pamje e re, e ndërtuar rreth stilit tënd — nga folje express, për folje express rezultat.",
-  accent: "#5bc7ff",
+    "Folie premium me ngjyra dhe dizajne për makina dhe motoçikleta. Një pamje e re, e ndërtuar rreth stilit tënd — nga Folje Express, për një rezultat që dallohet.",
+  heroTitleEn: "Change",
+  heroHighlightEn: "the look.",
+  heroSubtitleEn:
+    "Premium coloured foils and designs for cars and motorcycles. A new look built around your style — by Folje Express, for a result that stands out.",
+  heroTitleDe: "Verändere",
+  heroHighlightDe: "den Look.",
+  heroSubtitleDe:
+    "Premium-Folien in Farben und Designs für Autos und Motorräder. Ein neuer Look, gebaut um deinen Stil — von Folje Express, für ein Ergebnis das auffällt.",
   about:
-    "Folje Express është studio e specializuar për folie (wrap) automobilistike: ndërrim ngjyre, mbrojtje paint protection, dizajne custom dhe detaje për makina e motoçikleta. Çdo punë bëhet me materiale premium dhe përfundim të pastër.",
+    "Folje Express është studio e specializuar për folie automobilistike: ndërrim ngjyre, mbrojtje PPF, dizajne custom dhe detaje për makina e motoçikleta. Çdo punim bëhet me materiale premium dhe përfundim të pastër.",
+  aboutEn:
+    "Folje Express is a studio specialised in automotive wrapping: colour changes, PPF protection, custom designs and details for cars and motorcycles. Every job is done with premium materials and a clean finish.",
+  aboutDe:
+    "Folje Express ist ein Studio für Fahrzeugfolierung: Farbwechsel, PPF-Schutz, eigene Designs und Details für Autos und Motorräder. Jeder Auftrag wird mit Premium-Materialien und sauberem Finish ausgeführt.",
+  accent: "#5bc7ff",
 };
 
 export async function readSettings(): Promise<SiteSettings> {
@@ -263,7 +284,7 @@ export async function writeSettings(settings: SiteSettings) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Messages (contact / order requests)                                 */
+/* Messages / orders                                                   */
 /* ------------------------------------------------------------------ */
 
 const MESSAGES_BLOB = "data/messages.json";
@@ -271,15 +292,89 @@ const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 
 export async function readMessages(): Promise<Message[]> {
   const data = await readJSON<unknown>(MESSAGES_BLOB, MESSAGES_FILE, []);
-  return Array.isArray(data) ? (data as Message[]) : [];
+  if (!Array.isArray(data)) return [];
+  return (data as Partial<Message>[]).map((m) => ({
+    id: String(m.id || crypto.randomUUID()),
+    name: String(m.name || ""),
+    phone: String(m.phone || ""),
+    email: String(m.email || ""),
+    vehicle: String(m.vehicle || ""),
+    service: String(m.service || ""),
+    designId: String(m.designId || ""),
+    message: String(m.message || ""),
+    status: m.status === "accepted" || m.status === "declined" ? m.status : "pending",
+    createdAt: String(m.createdAt || new Date().toISOString()),
+    read: m.read === true,
+  }));
 }
 
 export async function writeMessages(messages: Message[]) {
-  await writeJSON(MESSAGES_BLOB, MESSAGES_FILE, messages.slice(0, 500)); // keep last 500
+  await writeJSON(MESSAGES_BLOB, MESSAGES_FILE, messages.slice(0, 500));
 }
 
 /* ------------------------------------------------------------------ */
-/* Stats                                                               */
+/* Accounts                                                            */
+/* ------------------------------------------------------------------ */
+
+const ACCOUNTS_BLOB = "data/accounts.json";
+const ACCOUNTS_FILE = path.join(DATA_DIR, "accounts.json");
+
+export async function hashPassword(password: string, salt: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(salt + ":" + password),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode("folje-pw-v1"));
+  return Buffer.from(sig).toString("hex");
+}
+
+export async function makeAccount(username: string, password: string, role: Role, createdBy: string): Promise<Account> {
+  const salt = crypto.randomUUID();
+  return {
+    id: crypto.randomUUID(),
+    username: username.toLowerCase(),
+    salt,
+    passHash: await hashPassword(password, salt),
+    role,
+    createdAt: new Date().toISOString(),
+    createdBy,
+  };
+}
+
+/** Accounts are auto-seeded with one Owner on first use. */
+export async function readAccounts(): Promise<Account[]> {
+  const data = await readJSON<unknown>(ACCOUNTS_BLOB, ACCOUNTS_FILE, null);
+  if (Array.isArray(data) && data.length > 0) return data as Account[];
+  const owner = await makeAccount("lorik", "lorikfx", "owner", "system");
+  await writeJSON(ACCOUNTS_BLOB, ACCOUNTS_FILE, [owner]);
+  return [owner];
+}
+
+export async function writeAccounts(accounts: Account[]) {
+  await writeJSON(ACCOUNTS_BLOB, ACCOUNTS_FILE, accounts);
+}
+
+/* ------------------------------------------------------------------ */
+/* Audit log                                                           */
+/* ------------------------------------------------------------------ */
+
+const LOGS_BLOB = "data/logs.json";
+const LOGS_FILE = path.join(DATA_DIR, "logs.json");
+
+export async function readLogs(): Promise<LogEntry[]> {
+  const data = await readJSON<unknown>(LOGS_BLOB, LOGS_FILE, []);
+  return Array.isArray(data) ? (data as LogEntry[]) : [];
+}
+
+export async function writeLogs(logs: LogEntry[]) {
+  await writeJSON(LOGS_BLOB, LOGS_FILE, logs.slice(0, 1000));
+}
+
+/* ------------------------------------------------------------------ */
+/* Stats & secret                                                      */
 /* ------------------------------------------------------------------ */
 
 const STATS_BLOB = "data/stats.json";
@@ -294,4 +389,26 @@ export async function readStats(): Promise<Stats> {
 
 export async function writeStats(stats: Stats) {
   await writeJSON(STATS_BLOB, STATS_FILE, stats);
+}
+
+const SECRET_BLOB = "data/secret.txt";
+const SECRET_FILE = path.join(DATA_DIR, "secret.txt");
+
+/** Server-side signing secret, generated once and stored privately. */
+export async function readSecret(): Promise<string> {
+  const existing = await readText(SECRET_BLOB, SECRET_FILE);
+  if (existing && existing.trim().length >= 32) return existing.trim();
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const secret = Buffer.from(bytes).toString("hex");
+  await writeText(SECRET_BLOB, SECRET_FILE, secret);
+  return secret;
+}
+
+/** Owner-only: wipe content, messages, logs and stats (accounts kept). */
+export async function resetSiteData() {
+  await writeDesigns([]);
+  await writeMessages([]);
+  await writeLogs([]);
+  await writeStats(defaultStats);
+  await writeSettings(defaultSettings);
 }

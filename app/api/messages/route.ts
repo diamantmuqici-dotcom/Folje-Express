@@ -48,6 +48,7 @@ export async function POST(request: Request) {
     service: clean(body.service, 80),
     designId: clean(body.designId, 64),
     message,
+    status: "pending",
     createdAt: new Date().toISOString(),
     read: false,
   };
