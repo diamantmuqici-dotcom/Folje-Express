@@ -32,7 +32,11 @@ export async function POST(request: Request) {
   if (file instanceof File && file.size > 0) {
     if (!file.type.startsWith("image/")) return Response.json({ error: "Skedari duhet të jetë foto." }, { status: 400 });
     if (file.size > 12 * 1024 * 1024) return Response.json({ error: "Fotoja duhet të jetë nën 12MB." }, { status: 400 });
-    image = await saveImage(file);
+    try {
+      image = await saveImage(file);
+    } catch (err) {
+      return Response.json({ error: err instanceof Error ? err.message : "Gabim upload-i." }, { status: 500 });
+    }
   }
 
   const rawCategory = clean(form.get("category"), 30);
@@ -124,7 +128,12 @@ export async function PATCH(request: Request) {
   if (newImageFile) {
     if (!newImageFile.type.startsWith("image/")) return Response.json({ error: "Skedari duhet të jetë foto." }, { status: 400 });
     if (newImageFile.size > 12 * 1024 * 1024) return Response.json({ error: "Fotoja duhet të jetë nën 12MB." }, { status: 400 });
-    const url = await saveImage(newImageFile);
+    let url = "";
+    try {
+      url = await saveImage(newImageFile);
+    } catch (err) {
+      return Response.json({ error: err instanceof Error ? err.message : "Gabim upload-i." }, { status: 500 });
+    }
     await removeImage(item.image);
     item.image = url;
     changes.push("fotoja u zëvendësua");
