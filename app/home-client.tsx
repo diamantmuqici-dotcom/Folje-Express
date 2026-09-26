@@ -438,7 +438,7 @@ export default function HomeClient({
           <p>{t("lab.subtitle", { biz: settings.businessName })}</p>
         </div>
         <div className="reveal">
-          <ColorLab lang={lang} />
+          <ColorLab lang={lang} settings={settings} />
         </div>
       </section>
 
