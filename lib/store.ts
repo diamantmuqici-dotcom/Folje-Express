@@ -261,7 +261,7 @@ export const defaultSettings: SiteSettings = {
   businessName: "FOLJE EXPRESS",
   tagline: "Motorcycle Wrap Studio",
   phone: "+383 49 000 000",
-  whatsapp: "+38349000000",
+  whatsapp: "+383 43 977 882",
   instagram: "foljeexpress",
   tiktok: "foljeexpress",
   email: "info@foljeexpress.com",
@@ -289,9 +289,17 @@ export const defaultSettings: SiteSettings = {
   accent: "#5bc7ff",
 };
 
+/* The placeholder WhatsApp line that shipped before the studio published its
+   real number. Stored settings would otherwise keep overriding the default,
+   which would leave the WhatsApp buttons pointing at a dead number. */
+const LEGACY_WHATSAPP = new Set(["+38349000000", "38349000000"]);
+
 export async function readSettings(): Promise<SiteSettings> {
   const data = await readJSON<Partial<SiteSettings>>(SETTINGS_BLOB, SETTINGS_FILE, {});
-  return { ...defaultSettings, ...data };
+  const merged = { ...defaultSettings, ...data };
+  const stored = String(data.whatsapp || "").replace(/[^0-9+]/g, "");
+  if (stored && LEGACY_WHATSAPP.has(stored)) merged.whatsapp = defaultSettings.whatsapp;
+  return merged;
 }
 
 export async function writeSettings(settings: SiteSettings) {
